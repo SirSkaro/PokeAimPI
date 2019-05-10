@@ -27,7 +27,7 @@ public class User {
 	public Integer getPoints() {
 		return points;
 	}
-	public SocialProfile getsocialProfile() {
+	public SocialProfile getSocialProfile() {
 		return socialProfile;
 	}
 	public void setId(Integer id) {
