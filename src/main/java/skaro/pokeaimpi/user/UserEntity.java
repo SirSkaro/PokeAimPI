@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class User {
+public class UserEntity {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -17,7 +17,7 @@ public class User {
 	private Integer points;
 	private SocialProfile socialProfile;
 	
-	public User() {
+	public UserEntity() {
 		
 	}
 	

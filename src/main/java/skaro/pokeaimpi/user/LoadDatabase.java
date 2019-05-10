@@ -11,8 +11,8 @@ public class LoadDatabase {
 	CommandLineRunner initDatabase(UserRepository repository) {
 		return args -> {
 			
-			User user1 = new User();
-			User user2 = new User();
+			UserEntity user1 = new UserEntity();
+			UserEntity user2 = new UserEntity();
 			SocialProfile profile1 = new SocialProfile();
 			SocialProfile profile2 = new SocialProfile();
 			

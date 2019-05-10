@@ -5,8 +5,8 @@ import java.util.Optional;
 
 public interface UserService {
 
-	public List<User> getAll();
-	public Optional<User> getByDiscordId(Long id);
-	public Optional<User> getByTwitchName(String name);
+	public List<UserDTO> getAll();
+	public Optional<UserDTO> getByDiscordId(Long id);
+	public Optional<UserDTO> getByTwitchName(String name);
 	
 }
