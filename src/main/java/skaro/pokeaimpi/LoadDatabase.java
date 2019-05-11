@@ -1,8 +1,14 @@
-package skaro.pokeaimpi.user;
+package skaro.pokeaimpi;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import skaro.pokeaimpi.repository.UserRepository;
+import skaro.pokeaimpi.repository.entity.DiscordConnection;
+import skaro.pokeaimpi.repository.entity.SocialProfile;
+import skaro.pokeaimpi.repository.entity.TwitchConnection;
+import skaro.pokeaimpi.repository.entity.UserEntity;
 
 @Configuration
 public class LoadDatabase {

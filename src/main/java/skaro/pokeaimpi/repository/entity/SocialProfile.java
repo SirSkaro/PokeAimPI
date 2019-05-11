@@ -1,4 +1,4 @@
-package skaro.pokeaimpi.user;
+package skaro.pokeaimpi.repository.entity;
 
 import javax.persistence.Embeddable;
 
