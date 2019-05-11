@@ -1,9 +1,9 @@
-package skaro.pokeaimpi.web.dto;
+package skaro.pokeaimpi.web.dtos;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import skaro.pokeaimpi.repository.entity.SocialProfile;
+import skaro.pokeaimpi.repository.entities.SocialProfile;
 
 @Data
 @Getter

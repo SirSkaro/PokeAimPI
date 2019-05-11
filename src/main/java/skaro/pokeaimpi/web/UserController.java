@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import skaro.pokeaimpi.service.UserService;
-import skaro.pokeaimpi.web.dto.UserDTO;
+import skaro.pokeaimpi.services.UserService;
+import skaro.pokeaimpi.web.dtos.UserDTO;
 
 @Controller   
 public class UserController {

@@ -1,4 +1,4 @@
-package skaro.pokeaimpi.service;
+package skaro.pokeaimpi.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skaro.pokeaimpi.repository.UserRepository;
-import skaro.pokeaimpi.web.dto.UserDTO;
+import skaro.pokeaimpi.web.dtos.UserDTO;
 
 @Service
 public class UserServiceImpl implements UserService {
