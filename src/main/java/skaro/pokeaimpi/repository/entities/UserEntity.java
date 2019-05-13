@@ -40,4 +40,9 @@ public class UserEntity {
 		this.socialProfile = socialProfile;
 	}
 	
+	public int incrementPoints(int pointsToAdd) {
+		this.points += pointsToAdd;
+		return this.points;
+	}
+	
 }
