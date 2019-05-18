@@ -1,4 +1,4 @@
-package skaro.pokeaimpi.web;
+package skaro.pokeaimpi.web.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
 

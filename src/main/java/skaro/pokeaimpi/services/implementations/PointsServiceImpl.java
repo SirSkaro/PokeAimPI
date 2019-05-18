@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.PointsService;
-import skaro.pokeaimpi.web.UserNotFoundException;
+import skaro.pokeaimpi.web.exceptions.UserNotFoundException;
 
 @Service
 public class PointsServiceImpl implements PointsService {
