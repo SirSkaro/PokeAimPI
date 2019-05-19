@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class UserEntity {
+public class UserEntity implements PokeAimPIEntity {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -18,7 +18,7 @@ public class UserEntity {
 	private SocialProfile socialProfile;
 	
 	public UserEntity() {
-		
+
 	}
 	
 	public Integer getId() {
@@ -40,7 +40,7 @@ public class UserEntity {
 		this.socialProfile = socialProfile;
 	}
 	
-	public int incrementPoints(int pointsToAdd) {
+	public int incrementPointsBy(int pointsToAdd) {
 		this.points += pointsToAdd;
 		return this.points;
 	}

@@ -17,17 +17,17 @@ public class PointsController {
 	private PointsService pointsService;
 	
 	@PostMapping(path="/add", params={"discordId","amount"})
-	public @ResponseBody Integer addPointsViaDiscord(
-			@RequestParam("discordId") Long id, 
+	public @ResponseBody void addPointsViaDiscord(
+			@RequestParam("discordId") Long discordId, 
 			@RequestParam("amount") Integer amount) {
-		return 10;
+		pointsService.addPointsViaDiscordId(discordId, amount);
 	}
 	
 	@PostMapping(path="/add", params={"twitchName", "amount"})
-	public @ResponseBody Integer addPointsViaTwitch(
+	public @ResponseBody void addPointsViaTwitch(
 			@RequestParam("twitchName") String twitchName,
 			@RequestParam("amount") Integer amount) {
-		return 20;
+		pointsService.addPointsViaTwitchName(twitchName, amount);
 	}
 	
 }
