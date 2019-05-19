@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.UserDTO;
+import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
 @Controller   
 @RequestMapping(path="/user")
@@ -30,12 +31,14 @@ public class UserController {
 	
 	@GetMapping("/discord/{id}")
 	public @ResponseBody UserDTO getByDiscordId(@PathVariable(value="id") Long id) {
-		return userService.getByDiscordId(id).orElse(null);
+		return userService.getByDiscordId(id)
+				.orElseThrow(() -> new SocialConnectionNotFoundException(id));
 	}
 	
 	@GetMapping("/twitch/{name}")
 	public @ResponseBody UserDTO getByTwitchName(@PathVariable(value="name") String name) {
-		return userService.getByTwitchName(name).orElse(null);
+		return userService.getByTwitchName(name)
+				.orElseThrow(() -> new SocialConnectionNotFoundException(name));
 	}
 	
 	

@@ -9,6 +9,7 @@ import skaro.pokeaimpi.repository.entities.SocialProfile;
 @Getter
 @Setter
 public class UserDTO {
+	private Integer id;
 	private Integer points;
 	private SocialProfile socialProfile;
 }
