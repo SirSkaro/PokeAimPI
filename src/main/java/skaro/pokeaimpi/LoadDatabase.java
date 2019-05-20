@@ -15,16 +15,13 @@ public class LoadDatabase {
 	CommandLineRunner initDatabase(UserRepository repository) {
 		return args -> {
 			
-			UserEntity user1 = new UserEntity();
-			UserEntity user2 = new UserEntity();
-			
-			user1 = EntityBuilder.of(UserEntity::new)
+			UserEntity user1 = EntityBuilder.of(UserEntity::new)
 					.with(UserEntity::setDiscordId, 1234L)
 					.with(UserEntity::setPoints, 100)
 					.with(UserEntity::setTwitchUserName, "pokeaim")
 					.build();
 			
-			user2 = EntityBuilder.of(UserEntity::new)
+			UserEntity user2 = EntityBuilder.of(UserEntity::new)
 					.with(UserEntity::setDiscordId, 4321L)
 					.with(UserEntity::setPoints, 200)
 					.with(UserEntity::setTwitchUserName, "sirskaro")
