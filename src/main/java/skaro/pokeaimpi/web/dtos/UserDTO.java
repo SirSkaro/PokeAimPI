@@ -1,7 +1,6 @@
 package skaro.pokeaimpi.web.dtos;
 
 import lombok.Data;
-import skaro.pokeaimpi.repository.entities.SocialProfile;
 
 @Data
 public class UserDTO {

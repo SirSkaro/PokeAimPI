@@ -1,4 +1,4 @@
-package skaro.pokeaimpi.repository.entities;
+package skaro.pokeaimpi.web.dtos;
 
 import javax.persistence.Embeddable;
 
