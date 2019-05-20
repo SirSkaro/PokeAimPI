@@ -15,7 +15,8 @@ public class UserEntity implements PokeAimPIEntity {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
 	private Integer points;
-	private SocialProfile socialProfile;
+	private Long discordId;
+	private String twitchUserName;
 	
 	public UserEntity() {
 
@@ -27,19 +28,25 @@ public class UserEntity implements PokeAimPIEntity {
 	public Integer getPoints() {
 		return points;
 	}
-	public SocialProfile getSocialProfile() {
-		return socialProfile;
-	}
 	public void setId(Integer id) {
 		this.id = id;
 	}
 	public void setPoints(Integer points) {
 		this.points = points;
 	}
-	public void setSocialProfile(SocialProfile socialProfile) {
-		this.socialProfile = socialProfile;
+	public Long getDiscordId() {
+		return discordId;
 	}
-	
+	public void setDiscordId(Long discordId) {
+		this.discordId = discordId;
+	}
+	public String getTwitchUserName() {
+		return twitchUserName;
+	}
+	public void setTwitchUserName(String twitchUserName) {
+		this.twitchUserName = twitchUserName;
+	}
+
 	public int incrementPointsBy(int pointsToAdd) {
 		this.points += pointsToAdd;
 		return this.points;

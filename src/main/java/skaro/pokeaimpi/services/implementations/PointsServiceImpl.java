@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skaro.pokeaimpi.repository.UserRepository;
-import skaro.pokeaimpi.repository.entities.DiscordConnection;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
-import skaro.pokeaimpi.repository.entities.SocialProfile;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.PointsService;
 
@@ -21,7 +19,7 @@ public class PointsServiceImpl implements PointsService {
 
 	@Override
 	public void addPointsViaDiscordId(Long discordId, int pointAmount) {
-		UserEntity user = userRepository.findBySocialProfileDiscordConnectionDiscordId(discordId)
+		UserEntity user = userRepository.findByDiscordId(discordId)
 				.orElse(createEntityWithDiscord(discordId));
 		
 		user.incrementPointsBy(pointAmount);
@@ -30,7 +28,7 @@ public class PointsServiceImpl implements PointsService {
 
 	@Override
 	public void addPointsViaTwitchName(String twitchName, int pointAmount) {
-		UserEntity user = userRepository.findBySocialProfileTwitchConnectionUserName(twitchName)
+		UserEntity user = userRepository.findByTwitchUserName(twitchName)
 				.orElse(new UserEntity());
 		
 		user.incrementPointsBy(pointAmount);
@@ -38,13 +36,8 @@ public class PointsServiceImpl implements PointsService {
 	}
 	
 	private UserEntity createEntityWithDiscord(Long id) {
-		SocialProfile profile = new SocialProfile();
-		DiscordConnection discordConnection = new DiscordConnection();
-		discordConnection.setDiscordId(id);
-		profile.setDiscordConnection(discordConnection);
-		
 		return EntityBuilder.of(UserEntity::new)
-				.with(UserEntity::setSocialProfile, profile)
+				.with(UserEntity::setDiscordId, id)
 				.with(UserEntity::setPoints, 0)
 				.build();
 	}

@@ -5,9 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import skaro.pokeaimpi.repository.UserRepository;
-import skaro.pokeaimpi.repository.entities.DiscordConnection;
-import skaro.pokeaimpi.repository.entities.SocialProfile;
-import skaro.pokeaimpi.repository.entities.TwitchConnection;
+import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 
 @Configuration
@@ -19,26 +17,18 @@ public class LoadDatabase {
 			
 			UserEntity user1 = new UserEntity();
 			UserEntity user2 = new UserEntity();
-			SocialProfile profile1 = new SocialProfile();
-			SocialProfile profile2 = new SocialProfile();
 			
-			user1.setPoints(100);
-			DiscordConnection discord = new DiscordConnection();
-			TwitchConnection twitch = new TwitchConnection();
-			discord.setDiscordId(1234L);
-			twitch.setUserName("pokeaim");
-			profile1.setDiscordConnection(discord);
-			profile1.setTwitchConnection(twitch);
-			user1.setSocialProfile(profile1);
+			user1 = EntityBuilder.of(UserEntity::new)
+					.with(UserEntity::setDiscordId, 1234L)
+					.with(UserEntity::setPoints, 100)
+					.with(UserEntity::setTwitchUserName, "pokeaim")
+					.build();
 			
-			user2.setPoints(200);
-			discord = new DiscordConnection();
-			twitch = new TwitchConnection();
-			discord.setDiscordId(4321L);
-			twitch.setUserName("sirskaro");
-			profile2.setDiscordConnection(discord);
-			profile2.setTwitchConnection(twitch);
-			user2.setSocialProfile(profile2);
+			user2 = EntityBuilder.of(UserEntity::new)
+					.with(UserEntity::setDiscordId, 4321L)
+					.with(UserEntity::setPoints, 200)
+					.with(UserEntity::setTwitchUserName, "sirskaro")
+					.build();
 			
 			repository.save(user1);
 			repository.save(user2);
