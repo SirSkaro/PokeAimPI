@@ -56,6 +56,24 @@ public class UserControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)));
 	}
 	
+	@Test
+	public void getByDiscordIdShouldGetUserWithSpecifiedId() throws Exception {
+		int discordId = 1;
+		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection.discordId", Matchers.is(discordId)));
+	}
+	
+	@Test
+	public void getByDiscordIdShould404WhenNoDiscordIdExists() throws Exception {
+		int discordId = 2;
+		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isNotFound());
+	}
+	
 	private UserDTO setUpMockDiscordUserDTO() {
 		UserDTO discordUserDTO = new UserDTO();
 		SocialProfile profile = new SocialProfile();
