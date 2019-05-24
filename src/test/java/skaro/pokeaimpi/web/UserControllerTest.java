@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.DiscordConnection;
 import skaro.pokeaimpi.web.dtos.SocialProfile;
+import skaro.pokeaimpi.web.dtos.TwitchConnection;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
@@ -41,10 +42,14 @@ public class UserControllerTest {
 		usersInRepo.add(new UserDTO());
 		usersInRepo.add(new UserDTO());
 		usersInRepo.add(new UserDTO());
+		UserDTO testDTO = setUpMockUserDTO();
 		
 		when(userService.getAll()).thenReturn(usersInRepo);
-		when(userService.getByDiscordId(1L)).thenReturn(Optional.of(setUpMockDiscordUserDTO()));
+		when(userService.getByDiscordId(1L)).thenReturn(Optional.of(testDTO));
+		when(userService.getByDiscordId(1L)).thenReturn(Optional.of(testDTO));
 		when(userService.getByDiscordId(2L)).thenThrow(new SocialConnectionNotFoundException(2L));
+		when(userService.getByTwitchName("test_user")).thenReturn(Optional.of(testDTO));
+		when(userService.getByTwitchName("no_such_user")).thenThrow(new SocialConnectionNotFoundException("no_such_user"));
 	}
 	
 	@Test
@@ -74,12 +79,33 @@ public class UserControllerTest {
 		.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 	
-	private UserDTO setUpMockDiscordUserDTO() {
+	@Test
+	public void getByTwitchNameShouldGetUserWithSpecifiedName() throws Exception {
+		String userName = "test_user";
+		mockMvc.perform(MockMvcRequestBuilders.get("/user/twitch/"+ userName))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.twitchConnection.userName", Matchers.is(userName)));
+	}
+	
+	@Test
+	public void getByTwitchnameShould404WhenNoTwitchNameExists() throws Exception {
+		String userName = "no_such_user";
+		mockMvc.perform(MockMvcRequestBuilders.get("/user/twitch/"+ userName))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isNotFound());
+	}
+	
+	private UserDTO setUpMockUserDTO() {
 		UserDTO discordUserDTO = new UserDTO();
 		SocialProfile profile = new SocialProfile();
 		DiscordConnection discordConnection = new DiscordConnection();
 		discordConnection.setDiscordId(1L);
+		TwitchConnection twitchConnection = new TwitchConnection();
+		twitchConnection.setUserName("test_user");
 		profile.setDiscordConnection(discordConnection);
+		profile.setTwitchConnection(twitchConnection);
 		discordUserDTO.setSocialProfile(profile);
 		
 		return discordUserDTO;
