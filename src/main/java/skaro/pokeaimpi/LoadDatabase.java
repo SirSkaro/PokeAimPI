@@ -34,12 +34,14 @@ public class LoadDatabase {
 			BadgeEntity badge1 = EntityBuilder.of(BadgeEntity::new)
 					.with(BadgeEntity::setPointThreshold, 1000)
 					.with(BadgeEntity::setDescription, "description 1")
+					.with(BadgeEntity::setTitle, "title 1")
 					.with(BadgeEntity::setImageUri, "google.com")
 					.build();
 			
 			BadgeEntity badge2 = EntityBuilder.of(BadgeEntity::new)
 					.with(BadgeEntity::setPointThreshold, 2000)
 					.with(BadgeEntity::setDescription, "description 2")
+					.with(BadgeEntity::setTitle, "title 2")
 					.with(BadgeEntity::setImageUri, "youtube.com")
 					.build();
 			

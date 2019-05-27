@@ -1,30 +1,14 @@
-package skaro.pokeaimpi.repository.entities;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+package skaro.pokeaimpi.web.dtos;
 
 import lombok.Data;
 
 @Data
-@Entity
-public class BadgeEntity implements PokeAimPIEntity {
-
-	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+public class BadgeDTO {
+	
 	private Integer pointThreshold;
 	private String imageUri;
 	private String title;
 	private String description;
-	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
 	public Integer getPointThreshold() {
 		return pointThreshold;
 	}
@@ -49,5 +33,6 @@ public class BadgeEntity implements PokeAimPIEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
 	
 }
