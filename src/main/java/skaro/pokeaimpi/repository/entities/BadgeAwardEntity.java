@@ -31,7 +31,7 @@ public class BadgeAwardEntity implements PokeAimPIEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private BadgeEntity badge;
 
-	private Date rewardDate;
+	private Date awardDate;
 	
 	public Integer getId() {
 		return id;
@@ -52,11 +52,11 @@ public class BadgeAwardEntity implements PokeAimPIEntity {
 		this.badge = badge;
 	}
 	public Date getRewardDate() {
-		return rewardDate;
+		return awardDate;
 	}
 	
 	@PrePersist
 	void createRewardDate() {
-		rewardDate = new Date();
+		awardDate = new Date();
 	}
 }

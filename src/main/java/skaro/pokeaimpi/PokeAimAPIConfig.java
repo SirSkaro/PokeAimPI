@@ -14,13 +14,7 @@ import skaro.pokeaimpi.web.dtos.UserDTO;
 public class PokeAimAPIConfig {
 	
 	@Bean("modelMapper")
-	@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public ModelMapper getModelMapper() {
-		return new ModelMapper();
-	}
-	
-	@Bean("userModelMapper")
-	@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public ModelMapper getUserModelMapper() {
 		
 		PropertyMap<UserEntity, UserDTO> userMapping = new PropertyMap<UserEntity, UserDTO>() {

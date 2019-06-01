@@ -1,8 +1,11 @@
 package skaro.pokeaimpi.web.dtos;
 
+import javax.persistence.Embeddable;
+
 import lombok.Data;
 
 @Data
+@Embeddable
 public class BadgeDTO {
 	
 	private Integer pointThreshold;

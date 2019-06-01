@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 
 public interface BadgeAwardRepository extends JpaRepository<BadgeAwardEntity, Integer> {
-	List<BadgeAwardEntity> findByUserId(long id);
-	List<BadgeAwardEntity> findByBadgeId(long id);
-	Optional<BadgeAwardEntity> findByBadgeIdAndUserId(long badgeId, long userId);
+	List<BadgeAwardEntity> findByUserId(Integer id);
+	List<BadgeAwardEntity> findByBadgeId(Integer id);
+	Optional<BadgeAwardEntity> findByBadgeIdAndUserId(Integer badgeId, Integer userId);
 }
