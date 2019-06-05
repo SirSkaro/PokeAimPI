@@ -1,6 +1,7 @@
 package skaro.pokeaimpi.web;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import skaro.pokeaimpi.services.PointsService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(PointsController.class)
+@WebMvcTest(BadgeAwardController.class)
 public class PointsControllerTest {
 	
 	@Autowired
@@ -22,6 +23,11 @@ public class PointsControllerTest {
 	
 	@Before
 	public void setUp() {
+	}
+	
+	@Test
+	public void getByDiscordIdShould404WhenNoDiscordIdExists() throws Exception {
+		
 	}
 	
 }

@@ -9,5 +9,6 @@ public interface BadgeService {
 	
 	public List<BadgeDTO> getAll();
 	public Optional<BadgeDTO> getById(Integer id);
+	public List<BadgeDTO> getBadgesBetween(int floor, int ceiling);
 	
 }

@@ -21,26 +21,26 @@ public class LoadDatabase {
 			
 			UserEntity user1 = EntityBuilder.of(UserEntity::new)
 					.with(UserEntity::setDiscordId, 1234L)
-					.with(UserEntity::setPoints, 100)
+					.with(UserEntity::setPoints, 0)
 					.with(UserEntity::setTwitchUserName, "pokeaim")
 					.build();
 			
 			UserEntity user2 = EntityBuilder.of(UserEntity::new)
 					.with(UserEntity::setDiscordId, 4321L)
-					.with(UserEntity::setPoints, 200)
+					.with(UserEntity::setPoints, 0)
 					.with(UserEntity::setTwitchUserName, "sirskaro")
 					.build();
 			
 			BadgeEntity badge1 = EntityBuilder.of(BadgeEntity::new)
 					.with(BadgeEntity::setPointThreshold, 1000)
-					.with(BadgeEntity::setDescription, "description 1")
+					.with(BadgeEntity::setDescription, "for 1000 points")
 					.with(BadgeEntity::setTitle, "title 1")
 					.with(BadgeEntity::setImageUri, "google.com")
 					.build();
 			
 			BadgeEntity badge2 = EntityBuilder.of(BadgeEntity::new)
 					.with(BadgeEntity::setPointThreshold, 2000)
-					.with(BadgeEntity::setDescription, "description 2")
+					.with(BadgeEntity::setDescription, "for 2000 points")
 					.with(BadgeEntity::setTitle, "title 2")
 					.with(BadgeEntity::setImageUri, "youtube.com")
 					.build();

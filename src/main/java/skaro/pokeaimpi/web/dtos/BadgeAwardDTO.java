@@ -1,26 +1,34 @@
 package skaro.pokeaimpi.web.dtos;
 
+import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
-import skaro.pokeaimpi.repository.entities.BadgeEntity;
-import skaro.pokeaimpi.repository.entities.UserEntity;
 
 @Data
 public class BadgeAwardDTO {
 
-	private UserEntity user;
-	private BadgeEntity badge;
+	private UserDTO user;
+	private List<BadgeDTO> badges;
+	private Date awardDate;
 	
-	public UserEntity getUser() {
+	public UserDTO getUser() {
 		return user;
 	}
-	public void setUser(UserEntity user) {
+	public void setUser(UserDTO user) {
 		this.user = user;
 	}
-	public BadgeEntity getBadge() {
-		return badge;
+	public List<BadgeDTO> getBadges() {
+		return badges;
 	}
-	public void setBadge(BadgeEntity badge) {
-		this.badge = badge;
+	public void setBadges(List<BadgeDTO> badges) {
+		this.badges = badges;
+	}
+	public Date getAwardDate() {
+		return awardDate;
+	}
+	public void setAwardDate(Date awardDate) {
+		this.awardDate = awardDate;
 	}
 	
 }
