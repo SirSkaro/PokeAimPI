@@ -10,13 +10,13 @@ import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.BadgeService;
-import skaro.pokeaimpi.services.PointsService;
+import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 
 @Service
-public class PointsServiceImpl implements PointsService {
+public class PointServiceImpl implements PointService {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -29,35 +29,22 @@ public class PointsServiceImpl implements PointsService {
 	public BadgeAwardDTO addPointsViaDiscordId(Long discordId, int pointAmount) {
 		UserEntity user = userRepository.findByDiscordId(discordId)
 				.orElse(createEntityWithDiscord(discordId));
-		int previousPointAmount = user.getPoints();
-		int newPointAmount = previousPointAmount + pointAmount;
-		user.incrementPointsBy(pointAmount);
-		userRepository.saveAndFlush(user);
-		
-		List<BadgeDTO> badgesToReward = badgeService.getBadgesBetween(previousPointAmount, newPointAmount);
-		BadgeAwardDTO badgeAwardDTO = new BadgeAwardDTO();
-		badgeAwardDTO.setUser(modelMapper.map(user, UserDTO.class));
-		badgeAwardDTO.setBadges(badgesToReward);
-		
-		return badgeAwardDTO;
+		return awardPoints(user, pointAmount);
 	}
 
 	@Override
 	public BadgeAwardDTO addPointsViaTwitchName(String twitchName, int pointAmount) {
 		UserEntity user = userRepository.findByTwitchUserName(twitchName)
 				.orElse(new UserEntity());
-		
+		return awardPoints(user, pointAmount);
+	}
+	
+	private BadgeAwardDTO awardPoints(UserEntity user, int pointAmount) {
 		int previousPointAmount = user.getPoints();
 		int newPointAmount = previousPointAmount + pointAmount;
-		user.incrementPointsBy(pointAmount);
-		userRepository.saveAndFlush(user);
 		
-		List<BadgeDTO> badgesToReward = badgeService.getBadgesBetween(previousPointAmount, newPointAmount);
-		BadgeAwardDTO badgeAwardDTO = new BadgeAwardDTO();
-		badgeAwardDTO.setUser(modelMapper.map(user, UserDTO.class));
-		badgeAwardDTO.setBadges(badgesToReward);
-		
-		return badgeAwardDTO;
+		updatePointAmount(user, pointAmount);
+		return getBadgesToAward(user, previousPointAmount, newPointAmount);
 	}
 	
 	private UserEntity createEntityWithDiscord(Long id) {
@@ -65,5 +52,25 @@ public class PointsServiceImpl implements PointsService {
 				.with(UserEntity::setDiscordId, id)
 				.with(UserEntity::setPoints, 0)
 				.build();
+	}
+	
+	private UserEntity updatePointAmount(UserEntity user, int pointsToAdd) {
+		user.incrementPointsBy(pointsToAdd);
+		return userRepository.saveAndFlush(user);
+	}
+	
+	private BadgeAwardDTO getBadgesToAward(UserEntity user, int previousPointAmount, int newPointAmount) {
+		BadgeAwardDTO badgesToAward = getAwardsInRange(previousPointAmount, newPointAmount);
+		badgesToAward.setUser(modelMapper.map(user, UserDTO.class));
+		
+		return badgesToAward;
+	}
+	
+	private BadgeAwardDTO getAwardsInRange(int previousPointAmount, int newPointAmount) {
+		List<BadgeDTO> badgesToReward = badgeService.getBadgesBetween(previousPointAmount, newPointAmount);
+		BadgeAwardDTO badgeAwardDTO = new BadgeAwardDTO();
+		badgeAwardDTO.setBadges(badgesToReward);
+		
+		return badgeAwardDTO;
 	}
 }

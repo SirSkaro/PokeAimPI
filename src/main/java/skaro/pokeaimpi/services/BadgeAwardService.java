@@ -11,5 +11,6 @@ public interface BadgeAwardService {
 	public List<BadgeAwardDTO> getByBadgeId(Integer id);
 	public List<BadgeAwardDTO> getByUserId(Integer id);
 	public Optional<BadgeAwardDTO> getByBadgeIdAndUserId(Integer badgeId, Integer userId);
+	public BadgeAwardDTO addBadgeAwards(BadgeAwardDTO badgeAward);
 	
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import skaro.pokeaimpi.services.PointsService;
+import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.dtos.PointsDTO;
@@ -25,7 +25,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private PointsService pointsService;
+	private PointService pointService;
 	
 	public UserController() {
 		
@@ -50,7 +50,7 @@ public class UserController {
 	
 	@PatchMapping("/discord/{id}/points/add")
 	public BadgeAwardDTO addPointsByDiscordId(@PathVariable(value="id") Long id, @RequestBody PointsDTO pointRequest) {
-		return pointsService.addPointsViaDiscordId(id, pointRequest.getAmount());
+		return pointService.addPointsViaDiscordId(id, pointRequest.getAmount());
 	}
 	
 }

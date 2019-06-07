@@ -14,7 +14,7 @@ import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=PokeAimAPIConfig.class)
+@ContextConfiguration(classes= { PokeAimAPIConfig.class} )
 public class ModelMapperTest {
 	
 	@Autowired

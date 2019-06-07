@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.DiscordConnection;
 import skaro.pokeaimpi.web.dtos.SocialProfile;
@@ -35,6 +36,9 @@ public class UserControllerTest {
 	
 	@MockBean
 	private UserService userService;
+	
+	@MockBean
+	private PointService pointService;
 	
 	@Before
 	public void setUp() {
