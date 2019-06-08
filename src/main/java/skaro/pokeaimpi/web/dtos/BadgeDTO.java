@@ -12,6 +12,8 @@ public class BadgeDTO {
 	private String imageUri;
 	private String title;
 	private String description;
+	private Long discordRoleId;
+	
 	public Integer getPointThreshold() {
 		return pointThreshold;
 	}
@@ -36,6 +38,11 @@ public class BadgeDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+	public Long getDiscordRoleId() {
+		return discordRoleId;
+	}
+	public void setDiscordRoleId(Long discordRoleId) {
+		this.discordRoleId = discordRoleId;
+	}
 	
 }

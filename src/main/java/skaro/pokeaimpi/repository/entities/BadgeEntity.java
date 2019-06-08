@@ -18,6 +18,7 @@ public class BadgeEntity implements PokeAimPIEntity {
 	private String imageUri;
 	private String title;
 	private String description;
+	private Long discordRoleId;
 	
 	public Integer getId() {
 		return id;
@@ -48,6 +49,12 @@ public class BadgeEntity implements PokeAimPIEntity {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public Long getDiscordRoleId() {
+		return discordRoleId;
+	}
+	public void setDiscordRoleId(Long discordRoleId) {
+		this.discordRoleId = discordRoleId;
 	}
 	
 }

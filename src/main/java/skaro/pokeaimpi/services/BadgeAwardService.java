@@ -12,5 +12,6 @@ public interface BadgeAwardService {
 	public List<BadgeAwardDTO> getByUserId(Integer id);
 	public Optional<BadgeAwardDTO> getByBadgeIdAndUserId(Integer badgeId, Integer userId);
 	public BadgeAwardDTO addBadgeAwards(BadgeAwardDTO badgeAward);
+	public BadgeAwardDTO addBadgeAward(Long discordUserId, Long discordRoleId);
 	
 }

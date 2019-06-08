@@ -36,6 +36,7 @@ public class LoadDatabase {
 					.with(BadgeEntity::setDescription, "for 1000 points")
 					.with(BadgeEntity::setTitle, "title 1")
 					.with(BadgeEntity::setImageUri, "google.com")
+					.with(BadgeEntity::setDiscordRoleId, 1111L)
 					.build();
 			
 			BadgeEntity badge2 = EntityBuilder.of(BadgeEntity::new)
@@ -43,6 +44,7 @@ public class LoadDatabase {
 					.with(BadgeEntity::setDescription, "for 2000 points")
 					.with(BadgeEntity::setTitle, "title 2")
 					.with(BadgeEntity::setImageUri, "youtube.com")
+					.with(BadgeEntity::setDiscordRoleId, 2222L)
 					.build();
 			
 			BadgeAwardEntity award1 = EntityBuilder.of(BadgeAwardEntity::new)

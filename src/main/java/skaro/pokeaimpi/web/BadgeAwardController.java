@@ -47,4 +47,9 @@ public class BadgeAwardController {
 		return badgeAwardService.addBadgeAwards(awardDTO);
 	}
 	
+	@PostMapping("/discord/user/{discordUserId}/role/{discordRoleId}")
+	public BadgeAwardDTO awardBadgeByDiscordRoleId(@RequestParam("discordUserId") Long discordUserId, @RequestParam("discordRoleId") Long discordRoleId) {
+		return badgeAwardService.addBadgeAward(discordUserId, discordRoleId);
+	}
+	
 }

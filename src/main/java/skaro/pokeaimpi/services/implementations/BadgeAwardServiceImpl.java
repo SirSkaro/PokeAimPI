@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skaro.pokeaimpi.repository.BadgeAwardRepository;
+import skaro.pokeaimpi.repository.BadgeRepository;
+import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
@@ -17,12 +19,18 @@ import skaro.pokeaimpi.services.BadgeAwardService;
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.UserDTO;
+import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
+import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
 @Service
 public class BadgeAwardServiceImpl implements BadgeAwardService {
 
 	@Autowired
 	private BadgeAwardRepository awardRepository;
+	@Autowired
+	private BadgeRepository badgeRepository;
+	@Autowired
+	private UserRepository userRepository;
 	@Autowired
 	private ModelMapper modelMapper;
 	
@@ -65,6 +73,17 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 		return createAwardDTO(badgeAward.getUser(), awardEntities);
 	}
 	
+	@Override
+	public BadgeAwardDTO addBadgeAward(Long discordUserId, Long discordRoleId) {
+		UserEntity user = userRepository.findByDiscordId(discordUserId)
+				.orElseThrow(() -> new SocialConnectionNotFoundException(discordUserId));
+		BadgeEntity badge = badgeRepository.getByDiscordRoleId(discordRoleId)
+				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
+		
+		BadgeAwardEntity badgeAward = awardRepository.save(new BadgeAwardEntity(user, badge));
+		return modelMapper.map(badgeAward, BadgeAwardDTO.class);
+	}
+	
 	private BadgeAwardDTO createAwardDTO(UserDTO user, List<BadgeAwardEntity> awardEntities) {
 		BadgeAwardDTO resultDTO = new BadgeAwardDTO();
 		resultDTO.setUser(user);
@@ -98,5 +117,5 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 				.with(BadgeAwardEntity::setBadge, badge)
 				.build();
 	}
-	
+
 }

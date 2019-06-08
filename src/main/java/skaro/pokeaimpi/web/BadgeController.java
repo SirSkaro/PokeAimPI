@@ -25,9 +25,15 @@ public class BadgeController {
 	}
 	
 	@GetMapping("/{id}")
-	public BadgeDTO getByDiscordId(@PathVariable(value="id") Integer id) {
+	public BadgeDTO getById(@PathVariable(value="id") Integer id) {
 		return badgeService.getById(id)
 				.orElseThrow(() -> new BadgeNotFoundException(id));
+	}
+	
+	@GetMapping("/discord/{id}")
+	public BadgeDTO getByDiscordRoleId(@PathVariable(value="id") Long discordRoleId) {
+		return badgeService.getByDiscordRoleId(discordRoleId)
+				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 	}
 	
 }

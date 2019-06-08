@@ -33,6 +33,15 @@ public class BadgeAwardEntity implements PokeAimPIEntity {
 
 	private Date awardDate;
 	
+	public BadgeAwardEntity() {
+		
+	}
+	
+	public BadgeAwardEntity(UserEntity user, BadgeEntity badge) {
+		this.user = user;
+		this.badge = badge;
+	}
+	
 	public Integer getId() {
 		return id;
 	}

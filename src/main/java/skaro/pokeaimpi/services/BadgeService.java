@@ -9,6 +9,7 @@ public interface BadgeService {
 	
 	public List<BadgeDTO> getAll();
 	public Optional<BadgeDTO> getById(Integer id);
+	public Optional<BadgeDTO> getByDiscordRoleId(Long discordRoleId);
 	public List<BadgeDTO> getBadgesBetween(int floor, int ceiling);
 	
 }

@@ -42,4 +42,10 @@ public class BadgeServiceImpl implements BadgeService {
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public Optional<BadgeDTO> getByDiscordRoleId(Long discordRoleId) {
+		return badgeRepository.getByDiscordRoleId(discordRoleId)
+				.map(badge -> modelMapper.map(badge, BadgeDTO.class));
+	}
+
 }
