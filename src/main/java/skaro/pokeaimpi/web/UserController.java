@@ -2,6 +2,8 @@ package skaro.pokeaimpi.web;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +51,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/discord/{id}/points/add")
-	public BadgeAwardDTO addPointsByDiscordId(@PathVariable(value="id") Long id, @RequestBody PointsDTO pointRequest) {
+	public BadgeAwardDTO addPointsByDiscordId(@PathVariable(value="id") Long id, @Valid @RequestBody PointsDTO pointRequest) {
 		return pointService.addPointsViaDiscordId(id, pointRequest.getAmount());
 	}
 	

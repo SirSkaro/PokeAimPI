@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -66,7 +67,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void getAll_ShouldGetAllUsersFromUserService() throws Exception {
+	public void getAll_shouldGetAllUsersFromUserService() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/user"))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -75,7 +76,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void getByDiscordId_ShouldGetUserWithSpecifiedId() throws Exception {
+	public void getByDiscordId_shouldGetUserWithSpecifiedId() throws Exception {
 		int discordId = 1;
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
 		.andDo(MockMvcResultHandlers.print())
@@ -85,7 +86,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void getByDiscordId_Should404_WhenNoDiscordIdExists() throws Exception {
+	public void getByDiscordId_should404_whenNoDiscordIdExists() throws Exception {
 		int discordId = 2;
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
 		.andDo(MockMvcResultHandlers.print())
@@ -93,7 +94,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void getByTwitchName_ShouldGetUserWithSpecifiedName() throws Exception {
+	public void getByTwitchName_shouldGetUserWithSpecifiedName() throws Exception {
 		String userName = "test_user";
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/twitch/"+ userName))
 		.andDo(MockMvcResultHandlers.print())
@@ -103,7 +104,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void getByTwitchname_Should404_WhenNoTwitchNameExists() throws Exception {
+	public void getByTwitchname_Should404_whenNoTwitchNameExists() throws Exception {
 		String userName = "no_such_user";
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/twitch/"+ userName))
 		.andDo(MockMvcResultHandlers.print())
@@ -111,7 +112,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void addPointsByDiscordId_shouldReturnAnEmptyListOfAwards_WhenNoThresholdIsPassed() throws Exception {
+	public void addPointsByDiscordId_shouldReturnAnEmptyListOfAwards_whenNoThresholdIsPassed() throws Exception {
 		int discordId = 1;
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
@@ -129,7 +130,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void addPointsByDiscordId_shouldReturnListOfAwards_WhenThresholdIsPassed() throws Exception {
+	public void addPointsByDiscordId_shouldReturnListOfAwards_whenThresholdIsPassed() throws Exception {
 		int discordId = 1;
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
@@ -144,6 +145,25 @@ public class UserControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$.user.socialProfile.discordConnection.discordId", Matchers.is(discordId)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.badges").isArray())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.badges", Matchers.hasSize(2)));
+	}
+	
+	@Test
+	public void addPointsByDiscordId_should400_whenNegativePointsAreAdded() throws Exception {
+		int discordId = 1;
+		PointsDTO testRequest = new PointsDTO();
+		testRequest.setAmount(1);
+		
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/discord/"+discordId+"/points/add")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON);
+		
+		mockMvc.perform(builder.content("{\"amount\": -1}"))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isBadRequest());
+		
+		mockMvc.perform(builder.content("{\"amount\": 0}"))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isBadRequest());
 	}
 	
 	private UserDTO setUpMockUserDTO() {

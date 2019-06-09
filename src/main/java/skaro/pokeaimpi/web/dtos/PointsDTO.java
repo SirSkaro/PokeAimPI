@@ -1,7 +1,10 @@
 package skaro.pokeaimpi.web.dtos;
 
+import javax.validation.constraints.Positive;
+
 public class PointsDTO {
-	
+
+	@Positive
 	private Integer amount;
 
 	public Integer getAmount() {
