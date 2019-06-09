@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,7 +48,7 @@ public class UserController {
 				.orElseThrow(() -> new SocialConnectionNotFoundException(name));
 	}
 	
-	@PatchMapping("/discord/{id}/points/add")
+	@PostMapping("/discord/{id}/points/add")
 	public BadgeAwardDTO addPointsByDiscordId(@PathVariable(value="id") Long id, @RequestBody PointsDTO pointRequest) {
 		return pointService.addPointsViaDiscordId(id, pointRequest.getAmount());
 	}

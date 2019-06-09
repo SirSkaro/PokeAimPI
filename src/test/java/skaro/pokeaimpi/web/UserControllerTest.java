@@ -116,7 +116,7 @@ public class UserControllerTest {
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
 		
-		mockMvc.perform(MockMvcRequestBuilders.patch("/user/discord/"+discordId+"/points/add")
+		mockMvc.perform(MockMvcRequestBuilders.post("/user/discord/"+discordId+"/points/add")
 				.content("{\"amount\":1}")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
@@ -134,7 +134,7 @@ public class UserControllerTest {
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
 		
-		mockMvc.perform(MockMvcRequestBuilders.patch("/user/discord/"+discordId+"/points/add")
+		mockMvc.perform(MockMvcRequestBuilders.post("/user/discord/"+discordId+"/points/add")
 				.content("{\"amount\":2}")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
