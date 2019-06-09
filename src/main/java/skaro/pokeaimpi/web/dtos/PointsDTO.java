@@ -4,8 +4,7 @@ import javax.validation.constraints.Positive;
 
 public class PointsDTO {
 
-	@Positive
-	private Integer amount;
+	@Positive private Integer amount;
 
 	public Integer getAmount() {
 		return amount;

@@ -1,10 +1,16 @@
 package skaro.pokeaimpi.web;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,6 +40,16 @@ public class BadgeController {
 	public BadgeDTO getByDiscordRoleId(@PathVariable(value="id") Long discordRoleId) {
 		return badgeService.getByDiscordRoleId(discordRoleId)
 				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
+	}
+	
+	@PostMapping
+	public BadgeDTO createBadge(@RequestBody @Valid BadgeDTO badge) {
+		return badgeService.saveBadge(badge);
+	}
+	
+	@PutMapping("/discord/{id}")
+	public Optional<BadgeDTO> updateBadge(@PathVariable(value="id") Long discordRoleId, @RequestBody @Valid BadgeDTO badge) {
+		return badgeService.updateBadgeByDiscordRoleId(discordRoleId, badge);
 	}
 	
 }

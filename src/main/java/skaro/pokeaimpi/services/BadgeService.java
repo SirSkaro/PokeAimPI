@@ -11,5 +11,7 @@ public interface BadgeService {
 	public Optional<BadgeDTO> getById(Integer id);
 	public Optional<BadgeDTO> getByDiscordRoleId(Long discordRoleId);
 	public List<BadgeDTO> getBadgesBetween(int floor, int ceiling);
+	public BadgeDTO saveBadge(BadgeDTO badge);
+	public Optional<BadgeDTO> updateBadgeByDiscordRoleId(Long discordRoleId, BadgeDTO badge);
 	
 }

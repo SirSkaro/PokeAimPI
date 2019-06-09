@@ -1,6 +1,10 @@
 package skaro.pokeaimpi.web.dtos;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
+
+import org.hibernate.validator.constraints.URL;
 
 import lombok.Data;
 
@@ -9,10 +13,10 @@ import lombok.Data;
 public class BadgeDTO {
 	
 	private Integer pointThreshold;
-	private String imageUri;
-	private String title;
-	private String description;
-	private Long discordRoleId;
+	@URL(protocol = "http") private String imageUri;
+	@NotEmpty private String title;
+	@NotEmpty private String description;
+	@Positive private Long discordRoleId;
 	
 	public Integer getPointThreshold() {
 		return pointThreshold;

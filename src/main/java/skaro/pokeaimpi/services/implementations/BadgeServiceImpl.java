@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skaro.pokeaimpi.repository.BadgeRepository;
+import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.services.BadgeService;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 
@@ -46,6 +47,27 @@ public class BadgeServiceImpl implements BadgeService {
 	public Optional<BadgeDTO> getByDiscordRoleId(Long discordRoleId) {
 		return badgeRepository.getByDiscordRoleId(discordRoleId)
 				.map(badge -> modelMapper.map(badge, BadgeDTO.class));
+	}
+
+	@Override
+	public BadgeDTO saveBadge(BadgeDTO badge) {
+		BadgeEntity badgeEntity = modelMapper.map(badge, BadgeEntity.class);
+		badgeEntity = badgeRepository.save(badgeEntity);
+		
+		return modelMapper.map(badgeEntity, BadgeDTO.class);
+	}
+
+	@Override
+	public Optional<BadgeDTO> updateBadgeByDiscordRoleId(Long discordRoleId, BadgeDTO badge) {
+		BadgeEntity updatedBadgeEntity = modelMapper.map(badge, BadgeEntity.class);
+		return badgeRepository.getByDiscordRoleId(discordRoleId)
+				.map(entity -> updateEntityId(updatedBadgeEntity, entity.getId()))
+				.map(entity -> modelMapper.map(entity, BadgeDTO.class));
+	}
+	
+	private BadgeEntity updateEntityId(BadgeEntity entity, Integer id) {
+		entity.setId(id);
+		return entity;
 	}
 
 }
