@@ -13,10 +13,14 @@ import lombok.Data;
 public class BadgeDTO {
 	
 	private Integer pointThreshold;
-	@URL(protocol = "http") private String imageUri;
-	@NotEmpty private String title;
-	@NotEmpty private String description;
-	@Positive private Long discordRoleId;
+	@URL(protocol = "http", message = "image url must point to a valid url")
+	private String imageUri;
+	@NotEmpty(message = "badge must have a title")
+	private String title;
+	@NotEmpty(message = "badge must have a description")
+	private String description;
+	@Positive(message = "badge must have a valid Discord role id")
+	private Long discordRoleId;
 	
 	public Integer getPointThreshold() {
 		return pointThreshold;

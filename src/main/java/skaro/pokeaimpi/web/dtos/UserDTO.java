@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Embeddable
 public class UserDTO {
+	
 	private Integer id;
 	private Integer points;
 	private SocialProfile socialProfile;
