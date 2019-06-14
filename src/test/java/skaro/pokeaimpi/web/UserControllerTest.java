@@ -67,7 +67,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void getAll_shouldGetAllUsersFromUserService() throws Exception {
+	public void getAll_shouldGetAllUsers() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/user"))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -76,13 +76,29 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void getByDiscordId_shouldGetUserWithSpecifiedId() throws Exception {
+	public void getByDiscordId_shouldGetUserWithSpecifiedId_whenUserExists() throws Exception {
 		int discordId = 1;
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection.discordId", Matchers.is(discordId)));
+	}
+	
+	@Test
+	public void gettingAnyUser_shouldGetUserWithExpectedFields_whenUserExists() throws Exception {
+		int discordId = 1;
+		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile").isMap())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection").isMap())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.twitchConnection").isMap())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection.discordId", Matchers.anything()))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.twitchConnection.userName", Matchers.anything()))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.anything()))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.points", Matchers.anything()));
 	}
 	
 	@Test

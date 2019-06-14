@@ -1,6 +1,7 @@
 package skaro.pokeaimpi.web.dtos;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
@@ -12,6 +13,8 @@ import lombok.Data;
 @Embeddable
 public class BadgeDTO {
 	
+	private Integer id;
+	@Min(value = 0, message = "point threshold must be positive")
 	private Integer pointThreshold;
 	@URL(protocol = "http", message = "image url must point to a valid url")
 	private String imageUri;
@@ -22,6 +25,13 @@ public class BadgeDTO {
 	@Positive(message = "badge must have a valid Discord role id")
 	private Long discordRoleId;
 	
+	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public Integer getPointThreshold() {
 		return pointThreshold;
 	}
