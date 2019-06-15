@@ -33,19 +33,19 @@ public class BadgeControllerTest {
 	
 	@Before
 	public void setUp() {
+		Mockito.when(badgeService.getById(1)).thenReturn(Optional.of(createMockBadgeWithPrimaryKey(1)));
+		Mockito.when(badgeService.getByDiscordRoleId(1000L)).thenReturn(Optional.of(createMockBadgeWithDiscordRoleId(1000L)));
+	}
+	
+	@Test
+	public void getAll_shouldGetAllBadges() throws Exception {
 		List<BadgeDTO> allBadges = new ArrayList<>();
 		allBadges.add(new BadgeDTO());
 		allBadges.add(new BadgeDTO());
 		allBadges.add(new BadgeDTO());
 		
 		Mockito.when(badgeService.getAll()).thenReturn(allBadges);
-		Mockito.when(badgeService.getById(1)).thenReturn(Optional.of(createMockBadgeWithPrimaryKey(1)));
-		Mockito.when(badgeService.getById(2)).thenReturn(Optional.empty());
-		Mockito.when(badgeService.getByDiscordRoleId(1000L)).thenReturn(Optional.of(createMockBadgeWithDiscordRoleId(1000L)));
-	}
-	
-	@Test
-	public void getAll_shouldGetAllBadges() throws Exception {
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/badge"))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -79,6 +79,8 @@ public class BadgeControllerTest {
 	@Test
 	public void getById_should404_whenBadgeDoesNotExist() throws Exception {
 		int badgePrimaryKey = 2;
+		Mockito.when(badgeService.getById(badgePrimaryKey)).thenReturn(Optional.empty());
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badgePrimaryKey))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -91,6 +93,14 @@ public class BadgeControllerTest {
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId", Matchers.is(discordRoleId)));
+	}
+	
+	@Test
+	public void getByDiscordRoleId_should404_whenBadgeDoesNotExist() throws Exception {
+		int badgePrimaryKey = 2;
+		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badgePrimaryKey))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 	
 	private BadgeDTO createMockBadgeWithPrimaryKey(int primaryKey) {

@@ -46,28 +46,21 @@ public class UserControllerTest {
 	
 	@Before
 	public void setUp() {
-		List<UserDTO> usersInRepo = new ArrayList<>();
-		usersInRepo.add(new UserDTO());
-		usersInRepo.add(new UserDTO());
-		usersInRepo.add(new UserDTO());
 		UserDTO testUserDTO = setUpMockUserDTO();
-		Long discordId = testUserDTO.getSocialProfile().getDiscordConnection().getDiscordId();
+		Long discordId = 1L;
 		
-		Mockito.when(userService.getAll()).thenReturn(usersInRepo);
+		testUserDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.of(testUserDTO));
-		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.of(testUserDTO));
-		Mockito.when(userService.getByDiscordId(2L)).thenThrow(new SocialConnectionNotFoundException(2L));
-		Mockito.when(userService.getByTwitchName("test_user")).thenReturn(Optional.of(testUserDTO));
-		Mockito.when(userService.getByTwitchName("no_such_user")).thenThrow(new SocialConnectionNotFoundException("no_such_user"));
-		
-		BadgeAwardDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(testUserDTO);
-		BadgeAwardDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(testUserDTO);
-		Mockito.when(pointService.addPointsViaDiscordId(discordId, 1)).thenReturn(testEmptyAwardDTO);
-		Mockito.when(pointService.addPointsViaDiscordId(discordId, 2)).thenReturn(testNonEmptyAwardDTO);
 	}
 	
 	@Test
 	public void getAll_shouldGetAllUsers() throws Exception {
+		List<UserDTO> usersInRepo = new ArrayList<>();
+		usersInRepo.add(new UserDTO());
+		usersInRepo.add(new UserDTO());
+		usersInRepo.add(new UserDTO());
+		Mockito.when(userService.getAll()).thenReturn(usersInRepo);
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user"))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -103,7 +96,8 @@ public class UserControllerTest {
 	
 	@Test
 	public void getByDiscordId_should404_whenNoDiscordIdExists() throws Exception {
-		int discordId = 2;
+		long discordId = 2;
+		Mockito.when(userService.getByDiscordId(discordId)).thenThrow(new SocialConnectionNotFoundException(discordId));
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -111,7 +105,11 @@ public class UserControllerTest {
 	
 	@Test
 	public void getByTwitchName_shouldGetUserWithSpecifiedName() throws Exception {
+		UserDTO testUserDTO = setUpMockUserDTO();
 		String userName = "test_user";
+		testUserDTO.getSocialProfile().getTwitchConnection().setUserName(userName);
+		Mockito.when(userService.getByTwitchName("test_user")).thenReturn(Optional.of(testUserDTO));
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/twitch/"+ userName))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -122,6 +120,8 @@ public class UserControllerTest {
 	@Test
 	public void getByTwitchname_Should404_whenNoTwitchNameExists() throws Exception {
 		String userName = "no_such_user";
+		Mockito.when(userService.getByTwitchName(userName)).thenThrow(new SocialConnectionNotFoundException(userName));
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/twitch/"+ userName))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -129,7 +129,11 @@ public class UserControllerTest {
 	
 	@Test
 	public void addPointsByDiscordId_shouldReturnAnEmptyListOfAwards_whenNoThresholdIsPassed() throws Exception {
+		UserDTO testUserDTO = setUpMockUserDTO();
 		int discordId = 1;
+		BadgeAwardDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(testUserDTO, (long)discordId);
+		Mockito.when(pointService.addPointsViaDiscordId((long)discordId, 1)).thenReturn(testEmptyAwardDTO);
+		
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
 		
@@ -147,7 +151,10 @@ public class UserControllerTest {
 	
 	@Test
 	public void addPointsByDiscordId_shouldReturnListOfAwards_whenThresholdIsPassed() throws Exception {
+		UserDTO testUserDTO = setUpMockUserDTO();
 		int discordId = 1;
+		BadgeAwardDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(testUserDTO, (long)discordId);
+		Mockito.when(pointService.addPointsViaDiscordId((long)discordId, 2)).thenReturn(testNonEmptyAwardDTO);
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
 		
@@ -186,9 +193,7 @@ public class UserControllerTest {
 		UserDTO discordUserDTO = new UserDTO();
 		SocialProfile profile = new SocialProfile();
 		DiscordConnection discordConnection = new DiscordConnection();
-		discordConnection.setDiscordId(1L);
 		TwitchConnection twitchConnection = new TwitchConnection();
-		twitchConnection.setUserName("test_user");
 		profile.setDiscordConnection(discordConnection);
 		profile.setTwitchConnection(twitchConnection);
 		discordUserDTO.setSocialProfile(profile);
@@ -196,16 +201,17 @@ public class UserControllerTest {
 		return discordUserDTO;
 	}
 	
-	private BadgeAwardDTO setUpMockEmptyAwardDTO(UserDTO user) {
+	private BadgeAwardDTO setUpMockEmptyAwardDTO(UserDTO user, Long discordId) {
 		BadgeAwardDTO result = new BadgeAwardDTO();
+		user.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		result.setUser(user);
 		result.setBadges(new ArrayList<BadgeDTO>());
 		
 		return result;
 	}
 	
-	private BadgeAwardDTO setUpMockNonEmptyAwardDTO(UserDTO user) {
-		BadgeAwardDTO result = setUpMockEmptyAwardDTO(user);
+	private BadgeAwardDTO setUpMockNonEmptyAwardDTO(UserDTO user, Long discordId) {
+		BadgeAwardDTO result = setUpMockEmptyAwardDTO(user, discordId);
 		List<BadgeDTO> badges = new ArrayList<>();
 		badges.add(new BadgeDTO());
 		badges.add(new BadgeDTO());
