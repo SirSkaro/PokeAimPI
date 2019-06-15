@@ -16,7 +16,8 @@ public class BadgeDTO {
 	private Integer id;
 	@Min(value = 0, message = "point threshold must be positive")
 	private Integer pointThreshold;
-	@URL(protocol = "http", message = "image url must point to a valid url")
+	private Boolean canBeEarnedWithPoints;
+	@URL(message = "image url must point to a valid url")
 	private String imageUri;
 	@NotEmpty(message = "badge must have a title")
 	private String title;
@@ -37,6 +38,12 @@ public class BadgeDTO {
 	}
 	public void setPointThreshold(Integer pointThreshold) {
 		this.pointThreshold = pointThreshold;
+	}
+	public Boolean getCanBeEarnedWithPoints() {
+		return canBeEarnedWithPoints;
+	}
+	public void setCanBeEarnedWithPoints(Boolean canBeEarnedWithPoints) {
+		this.canBeEarnedWithPoints = canBeEarnedWithPoints;
 	}
 	public String getImageUri() {
 		return imageUri;

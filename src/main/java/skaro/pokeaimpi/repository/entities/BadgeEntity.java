@@ -15,6 +15,7 @@ public class BadgeEntity implements PokeAimPIEntity {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
 	private Integer pointThreshold;
+	private Boolean canBeEarnedWithPoints;
 	private String imageUri;
 	private String title;
 	private String description;
@@ -31,6 +32,12 @@ public class BadgeEntity implements PokeAimPIEntity {
 	}
 	public void setPointThreshold(Integer pointThreshold) {
 		this.pointThreshold = pointThreshold;
+	}
+	public Boolean getCanBeEarnedWithPoints() {
+		return canBeEarnedWithPoints;
+	}
+	public void setCanBeEarnedWithPoints(Boolean canBeEarnedWithPoints) {
+		this.canBeEarnedWithPoints = canBeEarnedWithPoints;
 	}
 	public String getImageUri() {
 		return imageUri;

@@ -37,7 +37,7 @@ public class BadgeServiceImpl implements BadgeService {
 
 	@Override
 	public List<BadgeDTO> getBadgesBetween(int floor, int ceiling) {
-		return badgeRepository.getByPointThresholdBetween(floor, ceiling)
+		return badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(floor, ceiling)
 				.stream()
 				.map(badge -> modelMapper.map(badge, BadgeDTO.class))
 				.collect(Collectors.toList());

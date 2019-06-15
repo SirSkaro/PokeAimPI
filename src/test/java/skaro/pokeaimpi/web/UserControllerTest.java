@@ -98,6 +98,7 @@ public class UserControllerTest {
 	public void getByDiscordId_should404_whenNoDiscordIdExists() throws Exception {
 		long discordId = 2;
 		Mockito.when(userService.getByDiscordId(discordId)).thenThrow(new SocialConnectionNotFoundException(discordId));
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -130,9 +131,9 @@ public class UserControllerTest {
 	@Test
 	public void addPointsByDiscordId_shouldReturnAnEmptyListOfAwards_whenNoThresholdIsPassed() throws Exception {
 		UserDTO testUserDTO = setUpMockUserDTO();
-		int discordId = 1;
-		BadgeAwardDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(testUserDTO, (long)discordId);
-		Mockito.when(pointService.addPointsViaDiscordId((long)discordId, 1)).thenReturn(testEmptyAwardDTO);
+		long discordId = 1;
+		BadgeAwardDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(testUserDTO, discordId);
+		Mockito.when(pointService.addPointsViaDiscordId(discordId, 1)).thenReturn(testEmptyAwardDTO);
 		
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
@@ -144,7 +145,7 @@ public class UserControllerTest {
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.user.socialProfile.discordConnection.discordId", Matchers.is(discordId)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.user.socialProfile.discordConnection.discordId", Matchers.is((int)discordId)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.badges").isArray())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.badges", Matchers.hasSize(0)));
 	}
@@ -152,9 +153,9 @@ public class UserControllerTest {
 	@Test
 	public void addPointsByDiscordId_shouldReturnListOfAwards_whenThresholdIsPassed() throws Exception {
 		UserDTO testUserDTO = setUpMockUserDTO();
-		int discordId = 1;
-		BadgeAwardDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(testUserDTO, (long)discordId);
-		Mockito.when(pointService.addPointsViaDiscordId((long)discordId, 2)).thenReturn(testNonEmptyAwardDTO);
+		long discordId = 1;
+		BadgeAwardDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(testUserDTO, discordId);
+		Mockito.when(pointService.addPointsViaDiscordId(discordId, 2)).thenReturn(testNonEmptyAwardDTO);
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
 		
@@ -165,7 +166,7 @@ public class UserControllerTest {
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.user.socialProfile.discordConnection.discordId", Matchers.is(discordId)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.user.socialProfile.discordConnection.discordId", Matchers.is((int)discordId)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.badges").isArray())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.badges", Matchers.hasSize(2)));
 	}

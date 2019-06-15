@@ -37,6 +37,7 @@ public class LoadDatabase {
 					.with(BadgeEntity::setTitle, "title 1")
 					.with(BadgeEntity::setImageUri, "google.com")
 					.with(BadgeEntity::setDiscordRoleId, 1111L)
+					.with(BadgeEntity::setCanBeEarnedWithPoints, true)
 					.build();
 			
 			BadgeEntity badge2 = EntityBuilder.of(BadgeEntity::new)

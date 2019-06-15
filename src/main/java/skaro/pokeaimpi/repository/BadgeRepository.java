@@ -9,7 +9,7 @@ import skaro.pokeaimpi.repository.entities.BadgeEntity;
 
 public interface BadgeRepository extends JpaRepository<BadgeEntity, Integer> {
 	
-	public List<BadgeEntity> getByPointThresholdBetween(int floor, int ceiling);
+	public List<BadgeEntity> getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(int floor, int ceiling);
 	public Optional<BadgeEntity> getByDiscordRoleId(Long discordRoleId);
 	
 }
