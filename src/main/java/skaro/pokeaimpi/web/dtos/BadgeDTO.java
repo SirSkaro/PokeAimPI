@@ -3,9 +3,8 @@ package skaro.pokeaimpi.web.dtos;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
-
-import org.hibernate.validator.constraints.URL;
 
 import lombok.Data;
 
@@ -17,7 +16,8 @@ public class BadgeDTO {
 	@Min(value = 0, message = "point threshold must be positive")
 	private Integer pointThreshold;
 	private Boolean canBeEarnedWithPoints;
-	@URL(message = "image url must point to a valid url")
+	@NotEmpty(message = "badge must have an image")
+	@Pattern(regexp = "^(http|https)[^\\s]+$", message = "image url must point to a valid url")
 	private String imageUri;
 	@NotEmpty(message = "badge must have a title")
 	private String title;

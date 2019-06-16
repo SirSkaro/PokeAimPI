@@ -1,7 +1,6 @@
 package skaro.pokeaimpi.web;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -51,8 +50,9 @@ public class BadgeController {
 	}
 	
 	@PutMapping("/discord/{id}")
-	public Optional<BadgeDTO> updateBadge(@PathVariable(value="id") Long discordRoleId, @RequestBody @Valid BadgeDTO badge) {
-		return badgeService.updateBadgeByDiscordRoleId(discordRoleId, badge);
+	public void updateBadge(@PathVariable(value="id") Long discordRoleId, @RequestBody @Valid BadgeDTO badge) {
+		badgeService.updateBadgeByDiscordRoleId(discordRoleId, badge)
+			.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 	}
 	
 }
