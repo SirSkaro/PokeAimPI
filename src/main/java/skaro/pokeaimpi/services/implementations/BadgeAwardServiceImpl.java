@@ -54,6 +54,14 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
 				.collect(Collectors.toList());
 	}
+	
+	@Override
+	public List<BadgeAwardDTO> getByUserDiscordId(Long discordId) {
+		return awardRepository.findByUserDiscordId(discordId)
+				.stream()
+				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.collect(Collectors.toList());
+	}
 
 	@Override
 	public Optional<BadgeAwardDTO> getByBadgeIdAndUserId(Integer userId, Integer badgeId) {
@@ -70,6 +78,20 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 		
 		BadgeAwardEntity badgeAward = awardRepository.save(new BadgeAwardEntity(user, badge));
 		return modelMapper.map(badgeAward, BadgeAwardDTO.class);
+	}
+
+	@Override
+	public List<BadgeAwardDTO> getByBadgeDiscordRoleId(Long discordId) {
+		return awardRepository.findByBadgeDiscordRoleId(discordId)
+				.stream()
+				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Optional<BadgeAwardDTO> getByDiscordRoleIdAndUserDiscordId(Long discordRoleId, Long userDiscordId) {
+		return awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId)
+				.map(award -> modelMapper.map(award, BadgeAwardDTO.class));
 	}
 
 }

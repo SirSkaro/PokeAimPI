@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -35,11 +34,6 @@ public class BadgeControllerTest {
 	@MockBean
 	private BadgeService badgeService;
 	
-	@Before
-	public void setUp() {
-		Mockito.when(badgeService.getById(1)).thenReturn(Optional.of(createMockBadgeWithPrimaryKey(1)));
-	}
-	
 	@Test
 	public void getAll_shouldGetAllBadges() throws Exception {
 		List<BadgeDTO> allBadges = new ArrayList<>();
@@ -58,26 +52,30 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void gettingAnyBadge_shouldGetBadgeWithExpectedFields_whenBadgeExists() throws Exception {
-		int badgePrimaryKey = 1;
-		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badgePrimaryKey))
+		BadgeDTO badge = createValidBadge();
+		Mockito.when(badgeService.getById(badge.getId())).thenReturn(Optional.of(badge));
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badge.getId()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.id",Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.pointThreshold", Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.canBeEarnedWithPoints", Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.imageUri", Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId", Matchers.anything()));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.pointThreshold").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.canBeEarnedWithPoints").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.imageUri").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.title").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.description").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId").exists());
 	}
 	
 	@Test
 	public void getById_shouldGetBadgeWithSpecifiedPrimaryKey_whenBadgeExists() throws Exception {
-		int badgePrimaryKey = 1;
-		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badgePrimaryKey))
+		BadgeDTO badge = createValidBadge();
+		Mockito.when(badgeService.getById(badge.getId())).thenReturn(Optional.of(badge));
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badge.getId()))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(badgePrimaryKey)));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(badge.getId())));
 	}
 	
 	@Test
@@ -203,12 +201,6 @@ public class BadgeControllerTest {
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isNotFound());
-	}
-	
-	private BadgeDTO createMockBadgeWithPrimaryKey(int primaryKey) {
-		BadgeDTO result = new BadgeDTO();
-		result.setId(primaryKey);
-		return result;
 	}
 	
 	private BadgeDTO createMockBadgeWithDiscordRoleId(Long discordRoleId) {
