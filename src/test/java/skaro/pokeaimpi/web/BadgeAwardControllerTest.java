@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import skaro.pokeaimpi.services.BadgeAwardService;
-import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
+import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(BadgeAwardController.class)
@@ -31,7 +31,7 @@ public class BadgeAwardControllerTest {
 	
 	@Test
 	public void getAll_shouldGetAllAwards() throws Exception {
-		List<NewAwardsDTO> allAwards = createListOfEmptyBadges();
+		List<BadgeAwardDTO> allAwards = createListOfEmptyBadges();
 		Mockito.when(awardService.getAll()).thenReturn(allAwards);
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/award"))
@@ -41,26 +41,11 @@ public class BadgeAwardControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(allAwards.size())));
 	}
 	
-	@Test
-	public void getByBadgeId_shouldGetAllAwardsWithBadgeId() throws Exception {
-//		List<NewAwardsDTO> allAwards = createListOfEmptyBadges();
-//		int badgeId = 1;
-//		allAwards.forEach(badge -> badge.get);
-//		
-//		Mockito.when(awardService.getByBadgeId(id)).thenReturn(allAwards);
-//		
-//		mockMvc.perform(MockMvcRequestBuilders.get("/award"))
-//		.andDo(MockMvcResultHandlers.print())
-//		.andExpect(MockMvcResultMatchers.status().isOk())
-//		.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
-//		.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)));
-	}
-	
-	private List<NewAwardsDTO> createListOfEmptyBadges() {
-		List<NewAwardsDTO> result = new ArrayList<>();
-		result.add(new NewAwardsDTO());
-		result.add(new NewAwardsDTO());
-		result.add(new NewAwardsDTO());
+	private List<BadgeAwardDTO> createListOfEmptyBadges() {
+		List<BadgeAwardDTO> result = new ArrayList<>();
+		result.add(new BadgeAwardDTO());
+		result.add(new BadgeAwardDTO());
+		result.add(new BadgeAwardDTO());
 		
 		return result;
 	}
