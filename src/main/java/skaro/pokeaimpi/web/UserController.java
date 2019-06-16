@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.services.UserService;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
+import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.PointsDTO;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
@@ -51,7 +51,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/discord/{id}/points/add")
-	public BadgeAwardDTO addPointsByDiscordId(@PathVariable(value="id") Long id, @Valid @RequestBody PointsDTO pointRequest) {
+	public NewAwardsDTO addPointsByDiscordId(@PathVariable(value="id") Long id, @Valid @RequestBody PointsDTO pointRequest) {
 		return pointService.addPointsViaDiscordId(id, pointRequest.getAmount());
 	}
 	

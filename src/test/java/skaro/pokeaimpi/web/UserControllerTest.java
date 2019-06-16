@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.services.UserService;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
+import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.DiscordConnection;
 import skaro.pokeaimpi.web.dtos.PointsDTO;
@@ -55,17 +55,17 @@ public class UserControllerTest {
 	
 	@Test
 	public void getAll_shouldGetAllUsers() throws Exception {
-		List<UserDTO> usersInRepo = new ArrayList<>();
-		usersInRepo.add(new UserDTO());
-		usersInRepo.add(new UserDTO());
-		usersInRepo.add(new UserDTO());
-		Mockito.when(userService.getAll()).thenReturn(usersInRepo);
+		List<UserDTO> allUsers = new ArrayList<>();
+		allUsers.add(new UserDTO());
+		allUsers.add(new UserDTO());
+		allUsers.add(new UserDTO());
+		Mockito.when(userService.getAll()).thenReturn(allUsers);
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user"))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
-		.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)));
+		.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(allUsers.size())));
 	}
 	
 	@Test
@@ -132,7 +132,7 @@ public class UserControllerTest {
 	public void addPointsByDiscordId_shouldReturnAnEmptyListOfAwards_whenNoThresholdIsPassed() throws Exception {
 		UserDTO testUserDTO = setUpMockUserDTO();
 		long discordId = 1;
-		BadgeAwardDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(testUserDTO, discordId);
+		NewAwardsDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(testUserDTO, discordId);
 		Mockito.when(pointService.addPointsViaDiscordId(discordId, 1)).thenReturn(testEmptyAwardDTO);
 		
 		PointsDTO testRequest = new PointsDTO();
@@ -154,7 +154,7 @@ public class UserControllerTest {
 	public void addPointsByDiscordId_shouldReturnListOfAwards_whenThresholdIsPassed() throws Exception {
 		UserDTO testUserDTO = setUpMockUserDTO();
 		long discordId = 1;
-		BadgeAwardDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(testUserDTO, discordId);
+		NewAwardsDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(testUserDTO, discordId);
 		Mockito.when(pointService.addPointsViaDiscordId(discordId, 2)).thenReturn(testNonEmptyAwardDTO);
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
@@ -202,8 +202,8 @@ public class UserControllerTest {
 		return discordUserDTO;
 	}
 	
-	private BadgeAwardDTO setUpMockEmptyAwardDTO(UserDTO user, Long discordId) {
-		BadgeAwardDTO result = new BadgeAwardDTO();
+	private NewAwardsDTO setUpMockEmptyAwardDTO(UserDTO user, Long discordId) {
+		NewAwardsDTO result = new NewAwardsDTO();
 		user.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		result.setUser(user);
 		result.setBadges(new ArrayList<BadgeDTO>());
@@ -211,8 +211,8 @@ public class UserControllerTest {
 		return result;
 	}
 	
-	private BadgeAwardDTO setUpMockNonEmptyAwardDTO(UserDTO user, Long discordId) {
-		BadgeAwardDTO result = setUpMockEmptyAwardDTO(user, discordId);
+	private NewAwardsDTO setUpMockNonEmptyAwardDTO(UserDTO user, Long discordId) {
+		NewAwardsDTO result = setUpMockEmptyAwardDTO(user, discordId);
 		List<BadgeDTO> badges = new ArrayList<>();
 		badges.add(new BadgeDTO());
 		badges.add(new BadgeDTO());

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import skaro.pokeaimpi.services.BadgeAwardService;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
+import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeAwardNotFoundException;
 
 @RestController   
@@ -22,33 +22,33 @@ public class BadgeAwardController {
 	BadgeAwardService badgeAwardService;
 	
 	@GetMapping
-	public List<BadgeAwardDTO> getAll() {
+	public List<NewAwardsDTO> getAll() {
 		return badgeAwardService.getAll();
 	}
 	
 	@GetMapping(params={"badgeId"})
-	public List<BadgeAwardDTO> getByBadgeId(@RequestParam("badgeId") Integer badgeId) {
+	public List<NewAwardsDTO> getByBadgeId(@RequestParam("badgeId") Integer badgeId) {
 		return badgeAwardService.getByBadgeId(badgeId);
 	}
 	
 	@GetMapping(params={"userId"})
-	public List<BadgeAwardDTO> getByUserId(@RequestParam("userId") Integer userId) {
+	public List<NewAwardsDTO> getByUserId(@RequestParam("userId") Integer userId) {
 		return badgeAwardService.getByUserId(userId);
 	}
 	
 	@GetMapping(params={"badgeId", "userId"})
-	public BadgeAwardDTO getByBadgeIdAndUserId(@RequestParam("badgeId") Integer badgeId, @RequestParam("userId") Integer userId) {
+	public NewAwardsDTO getByBadgeIdAndUserId(@RequestParam("badgeId") Integer badgeId, @RequestParam("userId") Integer userId) {
 		return badgeAwardService.getByBadgeIdAndUserId(badgeId, userId)
 			.orElseThrow(() -> new BadgeAwardNotFoundException(badgeId, userId));
 	}
 	
 	@PostMapping()
-	public BadgeAwardDTO awardBadges(@RequestBody BadgeAwardDTO awardDTO) {
+	public NewAwardsDTO awardBadges(@RequestBody NewAwardsDTO awardDTO) {
 		return badgeAwardService.addBadgeAwards(awardDTO);
 	}
 	
 	@PostMapping("/discord/user/{discordUserId}/role/{discordRoleId}")
-	public BadgeAwardDTO awardBadgeByDiscordRoleId(@RequestParam("discordUserId") Long discordUserId, @RequestParam("discordRoleId") Long discordRoleId) {
+	public NewAwardsDTO awardBadgeByDiscordRoleId(@RequestParam("discordUserId") Long discordUserId, @RequestParam("discordRoleId") Long discordRoleId) {
 		return badgeAwardService.addBadgeAward(discordUserId, discordRoleId);
 	}
 	

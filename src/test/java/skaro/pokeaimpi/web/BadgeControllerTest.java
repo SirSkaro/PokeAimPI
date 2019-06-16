@@ -53,7 +53,7 @@ public class BadgeControllerTest {
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
-		.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)));
+		.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(allBadges.size())));
 	}
 	
 	@Test

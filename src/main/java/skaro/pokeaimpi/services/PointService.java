@@ -1,8 +1,8 @@
 package skaro.pokeaimpi.services;
 
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
+import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 
 public interface PointService {
-	public BadgeAwardDTO addPointsViaDiscordId(Long discordId, int pointAmount);
-	public BadgeAwardDTO addPointsViaTwitchName(String twitchName, int pointAmount);
+	public NewAwardsDTO addPointsViaDiscordId(Long discordId, int pointAmount);
+	public NewAwardsDTO addPointsViaTwitchName(String twitchName, int pointAmount);
 }

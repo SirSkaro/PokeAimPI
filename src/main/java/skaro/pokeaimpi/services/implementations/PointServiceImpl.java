@@ -11,7 +11,7 @@ import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.BadgeService;
 import skaro.pokeaimpi.services.PointService;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
+import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 
@@ -26,20 +26,20 @@ public class PointServiceImpl implements PointService {
 	private BadgeService badgeService;
 
 	@Override
-	public BadgeAwardDTO addPointsViaDiscordId(Long discordId, int pointAmount) {
+	public NewAwardsDTO addPointsViaDiscordId(Long discordId, int pointAmount) {
 		UserEntity user = userRepository.findByDiscordId(discordId)
 				.orElse(createEntityWithDiscord(discordId));
 		return awardPoints(user, pointAmount);
 	}
 
 	@Override
-	public BadgeAwardDTO addPointsViaTwitchName(String twitchName, int pointAmount) {
+	public NewAwardsDTO addPointsViaTwitchName(String twitchName, int pointAmount) {
 		UserEntity user = userRepository.findByTwitchUserName(twitchName)
 				.orElse(new UserEntity());
 		return awardPoints(user, pointAmount);
 	}
 	
-	private BadgeAwardDTO awardPoints(UserEntity user, int pointAmount) {
+	private NewAwardsDTO awardPoints(UserEntity user, int pointAmount) {
 		int previousPointAmount = user.getPoints();
 		int newPointAmount = previousPointAmount + pointAmount;
 		
@@ -59,16 +59,16 @@ public class PointServiceImpl implements PointService {
 		return userRepository.saveAndFlush(user);
 	}
 	
-	private BadgeAwardDTO getBadgesToAward(UserEntity user, int previousPointAmount, int newPointAmount) {
-		BadgeAwardDTO badgesToAward = getAwardsInRange(previousPointAmount, newPointAmount);
+	private NewAwardsDTO getBadgesToAward(UserEntity user, int previousPointAmount, int newPointAmount) {
+		NewAwardsDTO badgesToAward = getAwardsInRange(previousPointAmount, newPointAmount);
 		badgesToAward.setUser(modelMapper.map(user, UserDTO.class));
 		
 		return badgesToAward;
 	}
 	
-	private BadgeAwardDTO getAwardsInRange(int previousPointAmount, int newPointAmount) {
+	private NewAwardsDTO getAwardsInRange(int previousPointAmount, int newPointAmount) {
 		List<BadgeDTO> badgesToReward = badgeService.getBadgesBetween(previousPointAmount, newPointAmount);
-		BadgeAwardDTO badgeAwardDTO = new BadgeAwardDTO();
+		NewAwardsDTO badgeAwardDTO = new NewAwardsDTO();
 		badgeAwardDTO.setBadges(badgesToReward);
 		
 		return badgeAwardDTO;

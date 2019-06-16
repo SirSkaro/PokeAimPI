@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class BadgeAwardDTO {
+public class NewAwardsDTO {
 
 	private UserDTO user;
 	private List<BadgeDTO> badges;

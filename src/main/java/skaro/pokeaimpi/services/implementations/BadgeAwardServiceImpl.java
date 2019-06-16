@@ -16,7 +16,7 @@ import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.BadgeAwardService;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
+import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
@@ -35,37 +35,37 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	private ModelMapper modelMapper;
 	
 	@Override
-	public List<BadgeAwardDTO> getAll() {
+	public List<NewAwardsDTO> getAll() {
 		return awardRepository.findAll()
 				.stream()
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.map(award -> modelMapper.map(award, NewAwardsDTO.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<BadgeAwardDTO> getByBadgeId(Integer id) {
+	public List<NewAwardsDTO> getByBadgeId(Integer id) {
 		return awardRepository.findByBadgeId(id)
 				.stream()
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.map(award -> modelMapper.map(award, NewAwardsDTO.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<BadgeAwardDTO> getByUserId(Integer id) {
+	public List<NewAwardsDTO> getByUserId(Integer id) {
 		return awardRepository.findByUserId(id)
 				.stream()
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.map(award -> modelMapper.map(award, NewAwardsDTO.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<BadgeAwardDTO> getByBadgeIdAndUserId(Integer userId, Integer badgeId) {
+	public Optional<NewAwardsDTO> getByBadgeIdAndUserId(Integer userId, Integer badgeId) {
 		return awardRepository.findByBadgeIdAndUserId(badgeId, userId)
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class));
+				.map(award -> modelMapper.map(award, NewAwardsDTO.class));
 	}
 
 	@Override
-	public BadgeAwardDTO addBadgeAwards(BadgeAwardDTO badgeAward) {
+	public NewAwardsDTO addBadgeAwards(NewAwardsDTO badgeAward) {
 		UserEntity user = modelMapper.map(badgeAward.getUser(), UserEntity.class);
 		List<BadgeEntity> badges = extractBadgeEntitiesOfAwardDTO(badgeAward);
 		
@@ -74,24 +74,24 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	}
 	
 	@Override
-	public BadgeAwardDTO addBadgeAward(Long discordUserId, Long discordRoleId) {
+	public NewAwardsDTO addBadgeAward(Long discordUserId, Long discordRoleId) {
 		UserEntity user = userRepository.findByDiscordId(discordUserId)
 				.orElseThrow(() -> new SocialConnectionNotFoundException(discordUserId));
 		BadgeEntity badge = badgeRepository.getByDiscordRoleId(discordRoleId)
 				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 		
 		BadgeAwardEntity badgeAward = awardRepository.save(new BadgeAwardEntity(user, badge));
-		return modelMapper.map(badgeAward, BadgeAwardDTO.class);
+		return modelMapper.map(badgeAward, NewAwardsDTO.class);
 	}
 	
-	private BadgeAwardDTO createAwardDTO(UserDTO user, List<BadgeAwardEntity> awardEntities) {
-		BadgeAwardDTO resultDTO = new BadgeAwardDTO();
+	private NewAwardsDTO createAwardDTO(UserDTO user, List<BadgeAwardEntity> awardEntities) {
+		NewAwardsDTO resultDTO = new NewAwardsDTO();
 		resultDTO.setUser(user);
 		resultDTO.setBadges(extractBadgeDTOsOfAwardEntities(awardEntities));
 		return resultDTO;
 	}
 	
-	private List<BadgeEntity> extractBadgeEntitiesOfAwardDTO(BadgeAwardDTO badgeAwardDTO) {
+	private List<BadgeEntity> extractBadgeEntitiesOfAwardDTO(NewAwardsDTO badgeAwardDTO) {
 		return badgeAwardDTO.getBadges()
 				.stream()
 				.map(badgeDTO -> modelMapper.map(badgeDTO, BadgeEntity.class))
