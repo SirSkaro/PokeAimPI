@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -20,11 +19,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.services.UserService;
-import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.DiscordConnection;
+import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.PointsDTO;
 import skaro.pokeaimpi.web.dtos.SocialProfile;
 import skaro.pokeaimpi.web.dtos.TwitchConnection;
@@ -44,15 +44,6 @@ public class UserControllerTest {
 	@MockBean
 	private PointService pointService;
 	
-	@Before
-	public void setUp() {
-		UserDTO testUserDTO = setUpMockUserDTO();
-		Long discordId = 1L;
-		
-		testUserDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
-		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.of(testUserDTO));
-	}
-	
 	@Test
 	public void getAll_shouldGetAllUsers() throws Exception {
 		List<UserDTO> allUsers = new ArrayList<>();
@@ -70,17 +61,23 @@ public class UserControllerTest {
 	
 	@Test
 	public void getByDiscordId_shouldGetUserWithSpecifiedId_whenUserExists() throws Exception {
-		int discordId = 1;
+		UserDTO userDTO = setUpMockUserDTO();
+		Long discordId = userDTO.getSocialProfile().getDiscordConnection().getDiscordId();
+		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.of(userDTO));
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection.discordId", Matchers.is(discordId)));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection.discordId", Matchers.is(discordId.intValue())));
 	}
 	
 	@Test
 	public void gettingAnyUser_shouldGetUserWithExpectedFields_whenUserExists() throws Exception {
-		int discordId = 1;
+		UserDTO userDTO = setUpMockUserDTO();
+		Long discordId = userDTO.getSocialProfile().getDiscordConnection().getDiscordId();
+		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.of(userDTO));
+		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ discordId))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
@@ -88,10 +85,10 @@ public class UserControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile").isMap())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection").isMap())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.twitchConnection").isMap())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection.discordId", Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.twitchConnection.userName", Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.anything()))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.points", Matchers.anything()));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.discordConnection.discordId").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.twitchConnection.userName").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.points").exists());
 	}
 	
 	@Test
@@ -106,16 +103,15 @@ public class UserControllerTest {
 	
 	@Test
 	public void getByTwitchName_shouldGetUserWithSpecifiedName() throws Exception {
-		UserDTO testUserDTO = setUpMockUserDTO();
-		String userName = "test_user";
-		testUserDTO.getSocialProfile().getTwitchConnection().setUserName(userName);
-		Mockito.when(userService.getByTwitchName("test_user")).thenReturn(Optional.of(testUserDTO));
+		UserDTO userDTO = setUpMockUserDTO();
+		String twitchUserName = userDTO.getSocialProfile().getTwitchConnection().getUserName();
+		Mockito.when(userService.getByTwitchName(twitchUserName)).thenReturn(Optional.of(userDTO));
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/user/twitch/"+ userName))
+		mockMvc.perform(MockMvcRequestBuilders.get("/user/twitch/"+ twitchUserName))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.twitchConnection.userName", Matchers.is(userName)));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.socialProfile.twitchConnection.userName", Matchers.is(twitchUserName)));
 	}
 	
 	@Test
@@ -130,16 +126,16 @@ public class UserControllerTest {
 	
 	@Test
 	public void addPointsByDiscordId_shouldReturnAnEmptyListOfAwards_whenNoThresholdIsPassed() throws Exception {
-		UserDTO testUserDTO = setUpMockUserDTO();
-		long discordId = 1;
-		NewAwardsDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(testUserDTO, discordId);
+		UserDTO userDTO = setUpMockUserDTO();
+		long discordId = userDTO.getSocialProfile().getDiscordConnection().getDiscordId();
+		NewAwardsDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(userDTO, discordId);
 		Mockito.when(pointService.addPointsViaDiscordId(discordId, 1)).thenReturn(testEmptyAwardDTO);
 		
 		PointsDTO testRequest = new PointsDTO();
 		testRequest.setAmount(1);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/user/discord/"+discordId+"/points/add")
-				.content("{\"amount\":1}")
+				.content(TestUtility.convertObjectToJsonBytes(testRequest))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(MockMvcResultHandlers.print())
@@ -152,15 +148,15 @@ public class UserControllerTest {
 	
 	@Test
 	public void addPointsByDiscordId_shouldReturnListOfAwards_whenThresholdIsPassed() throws Exception {
-		UserDTO testUserDTO = setUpMockUserDTO();
-		long discordId = 1;
-		NewAwardsDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(testUserDTO, discordId);
+		UserDTO userDTO = setUpMockUserDTO();
+		long discordId = userDTO.getSocialProfile().getDiscordConnection().getDiscordId();
+		NewAwardsDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(userDTO, discordId);
 		Mockito.when(pointService.addPointsViaDiscordId(discordId, 2)).thenReturn(testNonEmptyAwardDTO);
 		PointsDTO testRequest = new PointsDTO();
-		testRequest.setAmount(1);
+		testRequest.setAmount(2);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/user/discord/"+discordId+"/points/add")
-				.content("{\"amount\":2}")
+				.content(TestUtility.convertObjectToJsonBytes(testRequest))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(MockMvcResultHandlers.print())
@@ -191,15 +187,20 @@ public class UserControllerTest {
 	}
 	
 	private UserDTO setUpMockUserDTO() {
-		UserDTO discordUserDTO = new UserDTO();
+		UserDTO result = new UserDTO();
 		SocialProfile profile = new SocialProfile();
 		DiscordConnection discordConnection = new DiscordConnection();
 		TwitchConnection twitchConnection = new TwitchConnection();
 		profile.setDiscordConnection(discordConnection);
 		profile.setTwitchConnection(twitchConnection);
-		discordUserDTO.setSocialProfile(profile);
+		result.setSocialProfile(profile);
 		
-		return discordUserDTO;
+		result.setPoints(12);
+		result.setId(1);
+		result.getSocialProfile().getDiscordConnection().setDiscordId(1L);
+		result.getSocialProfile().getTwitchConnection().setUserName("twitch_name");
+		
+		return result;
 	}
 	
 	private NewAwardsDTO setUpMockEmptyAwardDTO(UserDTO user, Long discordId) {
