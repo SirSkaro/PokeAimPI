@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,7 +23,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import skaro.pokeaimpi.services.BadgeAwardService;
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
+import skaro.pokeaimpi.web.dtos.DiscordConnection;
+import skaro.pokeaimpi.web.dtos.SocialProfile;
+import skaro.pokeaimpi.web.dtos.TwitchConnection;
 import skaro.pokeaimpi.web.dtos.UserDTO;
+import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
+import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(BadgeAwardController.class)
@@ -82,6 +88,66 @@ public class BadgeAwardControllerTest {
 		}
 	}
 	
+	@Test
+	public void getByUserId_shouldGetAllAwardsForTheUser() throws Exception {
+		List<BadgeAwardDTO> allAwards = createListOfEmptyBadges();
+		int userId = 1;
+		allAwards.forEach(award -> award.setUser(createUserWithId(userId)));
+		Mockito.when(awardService.getByUserId(userId)).thenReturn(allAwards);
+		
+		ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get("/award")
+				.param("userId", Integer.toString(userId)))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+		.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(allAwards.size())));
+		
+		for(int i = 0; i < allAwards.size(); i++) {
+			actions.andExpect(MockMvcResultMatchers.jsonPath("$["+i+"].user.id", Matchers.is(userId)));
+		}
+	}
+	
+	@Test
+	public void awardBadge_shouldReturnNewAward_WhenUserAndBadgeExist() throws Exception {
+		BadgeAwardDTO newAward = createEmptyAward();
+		Long userDiscordId = 1L;
+		Long discordRoleId = 2L;
+		newAward.getBadge().setDiscordRoleId(discordRoleId);
+		newAward.setUser(createUserWithId(0));
+		newAward.getUser().getSocialProfile().getDiscordConnection().setDiscordId(userDiscordId);
+		Mockito.when(awardService.addBadgeAward(userDiscordId, discordRoleId)).thenReturn(newAward);
+		
+		String awardUrl = "/award/discord/user/" + userDiscordId + "/role/" + discordRoleId;
+		mockMvc.perform(MockMvcRequestBuilders.post(awardUrl))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isCreated())
+		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.user.socialProfile.discordConnection.discordId", Matchers.is(userDiscordId.intValue())))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.badge.discordRoleId", Matchers.is(discordRoleId.intValue())));
+	}
+	
+	@Test
+	public void awardBadge_should4XX_WhenUserDoesNotExist() throws Exception {
+		Long discordId = 1L;
+		Mockito.when(awardService.addBadgeAward(ArgumentMatchers.eq(discordId), ArgumentMatchers.anyLong())).thenThrow(new SocialConnectionNotFoundException(discordId));
+		
+		String awardUrl = "/award/discord/user/" + discordId + "/role/0";
+		mockMvc.perform(MockMvcRequestBuilders.post(awardUrl))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is4xxClientError());
+	}
+	
+	@Test
+	public void awardBadge_should4XX_WhenBadgeDoesNotExist() throws Exception {
+		Long roleId = 1L;
+		Mockito.when(awardService.addBadgeAward(ArgumentMatchers.anyLong(), ArgumentMatchers.eq(roleId))).thenThrow(new BadgeNotFoundException(roleId));
+		
+		String awardUrl = "/award/discord/user/0/role/"+ roleId;
+		mockMvc.perform(MockMvcRequestBuilders.post(awardUrl))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().is4xxClientError());
+	}
+	
 	private List<BadgeAwardDTO> createListOfEmptyBadges() {
 		List<BadgeAwardDTO> result = new ArrayList<>();
 		result.add(new BadgeAwardDTO());
@@ -102,6 +168,16 @@ public class BadgeAwardControllerTest {
 	
 	private BadgeDTO createBadgeWithId(int id) {
 		BadgeDTO result = new BadgeDTO();
+		result.setId(id);
+		return result;
+	}
+	
+	private UserDTO createUserWithId(int id) {
+		UserDTO result = new UserDTO();
+		SocialProfile profile = new SocialProfile();
+		profile.setDiscordConnection(new DiscordConnection());
+		profile.setTwitchConnection(new TwitchConnection());
+		result.setSocialProfile(profile);
 		result.setId(id);
 		return result;
 	}

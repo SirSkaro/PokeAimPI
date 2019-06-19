@@ -3,10 +3,13 @@ package skaro.pokeaimpi.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import skaro.pokeaimpi.services.BadgeAwardService;
@@ -57,9 +60,10 @@ public class BadgeAwardController {
 			.orElseThrow(() -> new BadgeAwardNotFoundException(discordRoleId, userDiscordId));
 	}
 	
-	@PostMapping("/discord/user/{discordUserId}/role/{discordRoleId}")
-	public BadgeAwardDTO awardBadgeByDiscordRoleId(@RequestParam("discordUserId") Long discordUserId, @RequestParam("discordRoleId") Long discordRoleId) {
-		return badgeAwardService.addBadgeAward(discordUserId, discordRoleId);
+	@PostMapping("/discord/user/{userDiscordId}/role/{discordRoleId}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public BadgeAwardDTO awardBadge(@PathVariable("userDiscordId") Long userDiscordId, @PathVariable("discordRoleId") Long discordRoleId) {
+		return badgeAwardService.addBadgeAward(userDiscordId, discordRoleId);
 	}
 	
 }
