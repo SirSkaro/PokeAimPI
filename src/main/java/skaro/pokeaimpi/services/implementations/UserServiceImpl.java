@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import skaro.pokeaimpi.repository.UserRepository;
+import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 
@@ -38,6 +39,13 @@ public class UserServiceImpl implements UserService {
 	public Optional<UserDTO> getByTwitchName(String name) {
 		return userRepository.findByTwitchUserName(name)
 				.map(user -> modelMapper.map(user, UserDTO.class));
+	}
+	
+	@Override
+	public UserDTO createOrUpdate(UserDTO user) {
+		UserEntity newUserEntity = modelMapper.map(user, UserEntity.class);
+		newUserEntity = userRepository.save(newUserEntity);
+		return modelMapper.map(newUserEntity, UserDTO.class);
 	}
 	
 }

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
+import skaro.pokeaimpi.web.dtos.BadgeDTO;
+import skaro.pokeaimpi.web.dtos.UserDTO;
 
 public interface BadgeAwardService {
 	
@@ -15,5 +17,6 @@ public interface BadgeAwardService {
 	public Optional<BadgeAwardDTO> getByBadgeIdAndUserId(Integer badgeId, Integer userId);
 	public Optional<BadgeAwardDTO> getByDiscordRoleIdAndUserDiscordId(Long discordRoleId, Long userDiscordId);
 	public BadgeAwardDTO addBadgeAward(Long discordUserId, Long discordRoleId);
+	public BadgeAwardDTO addBadgeAward(UserDTO user, BadgeDTO badge);
 	
 }

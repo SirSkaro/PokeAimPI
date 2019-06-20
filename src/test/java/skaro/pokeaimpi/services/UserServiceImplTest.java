@@ -34,7 +34,7 @@ public class UserServiceImplTest {
     static class UserServiceImplTestContextConfiguration {
   
         @Bean
-        public UserService employeeService() {
+        public UserService getUserService() {
             return new UserServiceImpl();
         }
         

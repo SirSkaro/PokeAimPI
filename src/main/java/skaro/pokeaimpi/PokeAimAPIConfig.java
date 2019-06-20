@@ -17,7 +17,7 @@ public class PokeAimAPIConfig {
 	@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public ModelMapper getUserModelMapper() {
 		
-		PropertyMap<UserEntity, UserDTO> userMapping = new PropertyMap<UserEntity, UserDTO>() {
+		PropertyMap<UserEntity, UserDTO> userEntityToDTOMapping = new PropertyMap<UserEntity, UserDTO>() {
 			@Override
 			protected void configure()
 			{
@@ -26,8 +26,18 @@ public class PokeAimAPIConfig {
 			}
 		};
 		
+		PropertyMap<UserDTO, UserEntity> userDTOToEntityMapping = new PropertyMap<UserDTO, UserEntity>() {
+			@Override
+			protected void configure()
+			{
+				map().setDiscordId(source.getSocialProfile().getDiscordConnection().getDiscordId());
+				map().setTwitchUserName(source.getSocialProfile().getTwitchConnection().getUserName());
+			}
+		};
+		
 		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.addMappings(userMapping);
+		modelMapper.addMappings(userEntityToDTOMapping);
+		modelMapper.addMappings(userDTOToEntityMapping);
 		
 		return modelMapper;
 	}
