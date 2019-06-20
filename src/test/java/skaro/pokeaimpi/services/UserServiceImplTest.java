@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,12 +19,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.implementations.UserServiceImpl;
-import skaro.pokeaimpi.web.dtos.DiscordConnection;
-import skaro.pokeaimpi.web.dtos.SocialProfile;
-import skaro.pokeaimpi.web.dtos.TwitchConnection;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -50,10 +48,7 @@ public class UserServiceImplTest {
 	@Test
 	public void getAll_shouldGetAllUsers() throws Exception {
 		UserDTO userDTO = new UserDTO();
-		List<UserEntity> allUsers = new ArrayList<>();
-		allUsers.add(new UserEntity());
-		allUsers.add(new UserEntity());
-		allUsers.add(new UserEntity());
+		List<UserEntity> allUsers = Arrays.asList(new UserEntity(), new UserEntity(), new UserEntity());
 	    Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
 		Mockito.when(userRepository.findAll()).thenReturn(allUsers);
 		
@@ -66,8 +61,8 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
-	public void getByDiscordId_shouldGetUserWithDiscordId_whenUserExists() throws Exception {
-		UserDTO userDTO = createEmptyUserDTO();
+	public void getByDiscordId_shouldGetUserWithDiscordId_whenUserExists() {
+		UserDTO userDTO = TestUtility.createEmptyUserDTO();
 		Long discordId = 1L;
 		userDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
@@ -79,8 +74,8 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
-	public void getByTwitchName_shouldGetUserWithTwitchName_whenUserExists() throws Exception {
-		UserDTO userDTO = createEmptyUserDTO();
+	public void getByTwitchName_shouldGetUserWithTwitchName_whenUserExists() {
+		UserDTO userDTO = TestUtility.createEmptyUserDTO();
 		String twitchName = "twitch";
 		userDTO.getSocialProfile().getTwitchConnection().setUserName(twitchName);
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
@@ -89,18 +84,6 @@ public class UserServiceImplTest {
 		Optional<UserDTO> userWithTwitchName = userService.getByTwitchName(twitchName);
 		assertTrue(userWithTwitchName.isPresent());
 		assertEquals(twitchName, userWithTwitchName.get().getSocialProfile().getTwitchConnection().getUserName());
-	}
-	
-	private UserDTO createEmptyUserDTO() {
-		UserDTO result = new UserDTO();
-		SocialProfile profile = new SocialProfile();
-		DiscordConnection discordConnection = new DiscordConnection();
-		TwitchConnection twitchConnection = new TwitchConnection();
-		profile.setDiscordConnection(discordConnection);
-		profile.setTwitchConnection(twitchConnection);
-		result.setSocialProfile(profile);
-		
-		return result;
 	}
 	
 }
