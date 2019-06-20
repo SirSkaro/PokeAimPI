@@ -23,11 +23,8 @@ import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
-import skaro.pokeaimpi.web.dtos.DiscordConnection;
 import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.PointsDTO;
-import skaro.pokeaimpi.web.dtos.SocialProfile;
-import skaro.pokeaimpi.web.dtos.TwitchConnection;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
@@ -187,13 +184,7 @@ public class UserControllerTest {
 	}
 	
 	private UserDTO setUpMockUserDTO() {
-		UserDTO result = new UserDTO();
-		SocialProfile profile = new SocialProfile();
-		DiscordConnection discordConnection = new DiscordConnection();
-		TwitchConnection twitchConnection = new TwitchConnection();
-		profile.setDiscordConnection(discordConnection);
-		profile.setTwitchConnection(twitchConnection);
-		result.setSocialProfile(profile);
+		UserDTO result = TestUtility.createEmptyUserDTO();
 		
 		result.setPoints(12);
 		result.setId(1);

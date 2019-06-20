@@ -20,12 +20,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.services.BadgeAwardService;
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
-import skaro.pokeaimpi.web.dtos.DiscordConnection;
-import skaro.pokeaimpi.web.dtos.SocialProfile;
-import skaro.pokeaimpi.web.dtos.TwitchConnection;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
@@ -173,11 +171,7 @@ public class BadgeAwardControllerTest {
 	}
 	
 	private UserDTO createUserWithId(int id) {
-		UserDTO result = new UserDTO();
-		SocialProfile profile = new SocialProfile();
-		profile.setDiscordConnection(new DiscordConnection());
-		profile.setTwitchConnection(new TwitchConnection());
-		result.setSocialProfile(profile);
+		UserDTO result = TestUtility.createEmptyUserDTO();
 		result.setId(id);
 		return result;
 	}
