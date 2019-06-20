@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.VerificationModeFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -66,7 +67,7 @@ public class UserServiceImplTest {
 		Long discordId = 1L;
 		userDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
-		Mockito.when(userRepository.findByDiscordId(discordId)).thenReturn(Optional.of(new UserEntity()));
+		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(new UserEntity()));
 		
 		Optional<UserDTO> userWithDiscordId = userService.getByDiscordId(discordId);
 		assertTrue(userWithDiscordId.isPresent());
@@ -79,11 +80,22 @@ public class UserServiceImplTest {
 		String twitchName = "twitch";
 		userDTO.getSocialProfile().getTwitchConnection().setUserName(twitchName);
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
-		Mockito.when(userRepository.findByTwitchUserName(twitchName)).thenReturn(Optional.of(new UserEntity()));
+		Mockito.when(userRepository.getByTwitchUserName(twitchName)).thenReturn(Optional.of(new UserEntity()));
 		
 		Optional<UserDTO> userWithTwitchName = userService.getByTwitchName(twitchName);
 		assertTrue(userWithTwitchName.isPresent());
 		assertEquals(twitchName, userWithTwitchName.get().getSocialProfile().getTwitchConnection().getUserName());
+	}
+	
+	@Test
+	public void createOrUpdate_shouldPersistUser() {
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(new UserDTO());
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserDTO.class), ArgumentMatchers.same(UserEntity.class))).thenReturn(new UserEntity());
+		Mockito.when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).thenReturn(new UserEntity());
+
+		userService.createOrUpdate(new UserDTO());
+
+		Mockito.verify(userRepository, VerificationModeFactory.times(1)).save(ArgumentMatchers.any(UserEntity.class));
 	}
 	
 }

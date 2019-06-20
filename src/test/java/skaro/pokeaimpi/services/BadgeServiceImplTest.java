@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.VerificationModeFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -70,6 +71,27 @@ public class BadgeServiceImplTest {
 		Optional<BadgeDTO> badgeWithDiscordRoleId = badgeService.getByDiscordRoleId(roleId);
 		assertTrue(badgeWithDiscordRoleId.isPresent());
 		assertEquals(roleId, badgeWithDiscordRoleId.get().getDiscordRoleId());
+	}
+	
+	@Test
+	public void saveBadge_shouldPersistBadge() {
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(new BadgeDTO());
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeDTO.class), ArgumentMatchers.same(BadgeEntity.class))).thenReturn(new BadgeEntity());
+		Mockito.when(badgeRepository.save(ArgumentMatchers.any(BadgeEntity.class))).thenReturn(new BadgeEntity());
+		
+		badgeService.saveBadge(new BadgeDTO());
+		Mockito.verify(badgeRepository, VerificationModeFactory.times(1)).save(ArgumentMatchers.any(BadgeEntity.class));
+	}
+	
+	@Test
+	public void updateBadgeByDiscordRoleId_shouldPersistBadge() {
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(new BadgeDTO());
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeDTO.class), ArgumentMatchers.same(BadgeEntity.class))).thenReturn(new BadgeEntity());
+		Mockito.when(badgeRepository.save(ArgumentMatchers.any(BadgeEntity.class))).thenReturn(new BadgeEntity());
+		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.anyLong())).thenReturn(Optional.of(new BadgeEntity()));
+		
+		badgeService.updateBadgeByDiscordRoleId(0L, new BadgeDTO());
+		Mockito.verify(badgeRepository, VerificationModeFactory.times(1)).save(ArgumentMatchers.any(BadgeEntity.class));
 	}
 	
 }

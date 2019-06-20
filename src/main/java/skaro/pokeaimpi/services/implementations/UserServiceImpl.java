@@ -31,13 +31,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Optional<UserDTO> getByDiscordId(Long id) {
-		return userRepository.findByDiscordId(id)
+		return userRepository.getByDiscordId(id)
 				.map(user -> modelMapper.map(user, UserDTO.class));
 	}
 
 	@Override
 	public Optional<UserDTO> getByTwitchName(String name) {
-		return userRepository.findByTwitchUserName(name)
+		return userRepository.getByTwitchUserName(name)
 				.map(user -> modelMapper.map(user, UserDTO.class));
 	}
 	

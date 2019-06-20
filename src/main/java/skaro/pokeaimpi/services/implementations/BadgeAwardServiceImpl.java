@@ -73,9 +73,9 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	}
 	
 	@Override
-	public BadgeAwardDTO addBadgeAward(Long discordUserId, Long discordRoleId) {
-		UserEntity user = userRepository.findByDiscordId(discordUserId)
-				.orElseThrow(() -> new SocialConnectionNotFoundException(discordUserId));
+	public BadgeAwardDTO addBadgeAward(Long userDiscordId, Long discordRoleId) {
+		UserEntity user = userRepository.getByDiscordId(userDiscordId)
+				.orElseThrow(() -> new SocialConnectionNotFoundException(userDiscordId));
 		BadgeEntity badge = badgeRepository.getByDiscordRoleId(discordRoleId)
 				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 		

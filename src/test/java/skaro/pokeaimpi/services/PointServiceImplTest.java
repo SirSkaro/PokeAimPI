@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.VerificationModeFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -70,6 +71,8 @@ public class PointServiceImplTest {
 		assertEquals(pointsToAward, awards.getUser().getPoints().intValue());
 		assertEquals(2, awards.getBadges().size());
 		assertEquals(discordId, user.getSocialProfile().getDiscordConnection().getDiscordId());
+		Mockito.verify(userService, VerificationModeFactory.times(1)).createOrUpdate(ArgumentMatchers.any(UserDTO.class));
+		Mockito.verify(awardService, VerificationModeFactory.atLeastOnce()).addBadgeAward(ArgumentMatchers.any(UserDTO.class), ArgumentMatchers.any(BadgeDTO.class));
 	}
 	
 	@Test
@@ -88,6 +91,8 @@ public class PointServiceImplTest {
 		assertEquals(pointsToAward, awards.getUser().getPoints().intValue());
 		assertEquals(2, awards.getBadges().size());
 		assertEquals(discordId, user.getSocialProfile().getDiscordConnection().getDiscordId());
+		Mockito.verify(userService, VerificationModeFactory.times(1)).createOrUpdate(ArgumentMatchers.any(UserDTO.class));
+		Mockito.verify(awardService, VerificationModeFactory.atLeastOnce()).addBadgeAward(ArgumentMatchers.any(UserDTO.class), ArgumentMatchers.any(BadgeDTO.class));
 	}
 	
 }
