@@ -9,4 +9,5 @@ public class PokeAimPI {
     public static void main(String[] args) {
         SpringApplication.run(PokeAimPI.class, args);
     }
+    
 }
