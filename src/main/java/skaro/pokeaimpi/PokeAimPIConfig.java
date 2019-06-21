@@ -11,7 +11,7 @@ import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 
 @Configuration
-public class PokeAimAPIConfig {
+public class PokeAimPIConfig {
 	
 	@Bean("modelMapper")
 	@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
