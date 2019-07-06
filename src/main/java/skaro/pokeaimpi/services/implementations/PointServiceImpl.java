@@ -47,7 +47,7 @@ public class PointServiceImpl implements PointService {
 		int newPointAmount = previousPointAmount + pointAmount;
 		
 		user = updatePointAmount(user, newPointAmount);
-		List<BadgeDTO> badgesToAward = badgeService.getBadgesBetween(previousPointAmount, newPointAmount);
+		List<BadgeDTO> badgesToAward = badgeService.getBadgesBetween(previousPointAmount + 1, newPointAmount);
 		
 		saveNewAwards(user, badgesToAward);
 		NewAwardsDTO result = createNewAwardsDTO(user, badgesToAward);
