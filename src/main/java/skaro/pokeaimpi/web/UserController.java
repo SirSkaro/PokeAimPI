@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import skaro.pokeaimpi.services.PointService;
+import skaro.pokeaimpi.services.ProgressService;
 import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.PointsDTO;
 import skaro.pokeaimpi.web.dtos.UserDTO;
+import skaro.pokeaimpi.web.dtos.UserProgressDTO;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
 @RestController   
@@ -28,6 +30,8 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private PointService pointService;
+	@Autowired
+	private ProgressService progressService;
 	
 	public UserController() {
 		
@@ -42,6 +46,11 @@ public class UserController {
 	public UserDTO getByDiscordId(@PathVariable(value="id") Long id) {
 		return userService.getByDiscordId(id)
 				.orElseThrow(() -> new SocialConnectionNotFoundException(id));
+	}
+	
+	@GetMapping("/discord/{id}/progress")
+	public UserProgressDTO getProgressByDiscordId(@PathVariable(value="id") Long id) {
+		return progressService.getByDiscordId(id);
 	}
 	
 	@GetMapping("/twitch/{name}")
