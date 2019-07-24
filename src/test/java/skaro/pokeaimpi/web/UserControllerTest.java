@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.services.PointService;
+import skaro.pokeaimpi.services.ProgressService;
 import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
@@ -40,6 +41,9 @@ public class UserControllerTest {
 	
 	@MockBean
 	private PointService pointService;
+	
+	@MockBean
+	private ProgressService progressService;
 	
 	@Test
 	public void getAll_shouldGetAllUsers() throws Exception {
