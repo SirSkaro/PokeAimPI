@@ -11,7 +11,7 @@ public class UserProgressDTO {
 	private UserDTO user;
 	private BadgeDTO nextBadge;
 	private BadgeDTO currentHighestBadge;
-	private Integer pointToNextReward;
+	private Integer pointsToNextReward;
 	private Integer currentPoints;
 	
 	public UserDTO getUser() {
@@ -32,11 +32,11 @@ public class UserProgressDTO {
 	public void setCurrentHighestBadge(BadgeDTO currentHighestBadge) {
 		this.currentHighestBadge = currentHighestBadge;
 	}
-	public Integer getPointToNextReward() {
-		return pointToNextReward;
+	public Integer getPointsToNextReward() {
+		return pointsToNextReward;
 	}
-	public void setPointToNextReward(Integer pointToNextReward) {
-		this.pointToNextReward = pointToNextReward;
+	public void setPointsToNextReward(Integer pointToNextReward) {
+		this.pointsToNextReward = pointToNextReward;
 	}
 	public Integer getCurrentPoints() {
 		return currentPoints;

@@ -100,7 +100,7 @@ public class ProgressServiceImplTest {
 		UserProgressDTO progress = progressService.getByDiscordId(discordId);
 		
 		assertEquals(threshold, progress.getCurrentPoints().intValue());
-		assertEquals(nextBadgeThreshold - threshold, progress.getPointToNextReward().intValue());
+		assertEquals(nextBadgeThreshold - threshold, progress.getPointsToNextReward().intValue());
 		assertEquals(discordId, progress.getUser().getSocialProfile().getDiscordConnection().getDiscordId());
 		assertEquals(discordRoleId, progress.getCurrentHighestBadge().getDiscordRoleId());
 		assertEquals(discordRoleId, progress.getNextBadge().getDiscordRoleId());
@@ -117,7 +117,7 @@ public class ProgressServiceImplTest {
 		UserProgressDTO progress = progressService.getByDiscordId(discordId);
 		
 		assertEquals(threshold, progress.getCurrentPoints().intValue());
-		assertEquals(nextBadgeThreshold - threshold, progress.getPointToNextReward().intValue());
+		assertEquals(nextBadgeThreshold - threshold, progress.getPointsToNextReward().intValue());
 		assertEquals(discordId, progress.getUser().getSocialProfile().getDiscordConnection().getDiscordId());
 		assertEquals(discordRoleId, progress.getCurrentHighestBadge().getDiscordRoleId());
 		assertEquals(discordRoleId, progress.getNextBadge().getDiscordRoleId());

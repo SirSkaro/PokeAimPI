@@ -37,7 +37,7 @@ public class ProgressServiceImpl implements ProgressService {
 		result.setCurrentHighestBadge(getCurrentHighestBadge(discordId));
 		result.setNextBadge(getNextBadge(user));
 		result.setCurrentPoints(user.getPoints());
-		result.setPointToNextReward( result.getNextBadge().getPointThreshold() - user.getPoints() );
+		result.setPointsToNextReward( result.getNextBadge().getPointThreshold() - user.getPoints() );
 		
 		return result;
 	}
