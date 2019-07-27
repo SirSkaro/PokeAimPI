@@ -35,9 +35,15 @@ public class ProgressServiceImpl implements ProgressService {
 		UserDTO user = getOrCreateUser(discordId);
 		result.setUser(user);
 		result.setCurrentHighestBadge(getCurrentHighestBadge(discordId));
-		result.setNextBadge(getNextBadge(user));
 		result.setCurrentPoints(user.getPoints());
-		result.setPointsToNextReward( result.getNextBadge().getPointThreshold() - user.getPoints() );
+		
+		BadgeDTO nextBadge = getNextBadge(user);
+		result.setNextBadge(nextBadge);
+		
+		if(nextBadge != null)
+			result.setPointsToNextReward( nextBadge.getPointThreshold() - user.getPoints() );
+		else
+			result.setPointsToNextReward(-1);
 		
 		return result;
 	}
@@ -51,6 +57,7 @@ public class ProgressServiceImpl implements ProgressService {
 	private UserEntity createNewUser(Long discordId) {
 		UserEntity newUser = EntityBuilder.of(UserEntity::new)
 				.with(UserEntity::setDiscordId, discordId)
+				.with(UserEntity::setPoints, 0)
 				.build();
 		return userRepository.save(newUser);
 	}
