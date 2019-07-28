@@ -31,7 +31,7 @@ public class PointServiceImpl implements PointService {
 	@Override
 	public NewAwardsDTO addPointsViaDiscordId(Long discordId, int pointAmount) {
 		UserDTO user = userService.getByDiscordId(discordId)
-				.orElse(createUserWithDiscordId(discordId));
+				.orElseGet(() -> createUserWithDiscordId(discordId));
 		return awardPoints(user, pointAmount);
 	}
 

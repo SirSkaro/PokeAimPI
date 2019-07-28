@@ -50,7 +50,7 @@ public class ProgressServiceImpl implements ProgressService {
 	
 	private UserDTO getOrCreateUser(Long discordId) {
 		UserEntity user = userRepository.getByDiscordId(discordId)
-				.orElse(createNewUser(discordId));
+				.orElseGet(() -> createNewUser(discordId));
 		return modelMapper.map(user, UserDTO.class);
 	}
 	
@@ -59,7 +59,7 @@ public class ProgressServiceImpl implements ProgressService {
 				.with(UserEntity::setDiscordId, discordId)
 				.with(UserEntity::setPoints, 0)
 				.build();
-		return userRepository.save(newUser);
+		return userRepository.saveAndFlush(newUser);
 	}
 
 	private BadgeDTO getCurrentHighestBadge(Long discordId) {
