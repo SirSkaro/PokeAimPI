@@ -11,5 +11,6 @@ public interface BadgeRepository extends JpaRepository<BadgeEntity, Integer> {
 	
 	public List<BadgeEntity> getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(int floor, int ceiling);
 	public Optional<BadgeEntity> getByDiscordRoleId(Long discordRoleId);
+	public Optional<BadgeEntity> getFirstByCanBeEarnedWithPointsTrueAndPointThresholdGreaterThanOrderByPointThreshold(int threshold);
 	
 }

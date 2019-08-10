@@ -1,9 +1,12 @@
 package skaro.pokeaimpi.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -25,6 +29,7 @@ import skaro.pokeaimpi.repository.entities.EntityBuilder;
 @ContextConfiguration(classes= { PokeAimPIConfig.class} )
 @EnableAutoConfiguration(exclude = { JpaRepositoriesAutoConfiguration.class })
 @AutoConfigureTestDatabase(replace=Replace.NONE)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BadgeRepositoryTest {
 
 	@Autowired
@@ -32,39 +37,51 @@ public class BadgeRepositoryTest {
 	@Autowired
 	private BadgeRepository badgeRepository;
 	
+	@Before
+	public void setup() {
+		
+	}
+	
 	@Test
 	public void getByCanBeEarnedWithPointsTrueAndPointThresholdBetween_shouldGetBadgesWithInclusiveRange_whenBadgesExist() {
 		int lowerBound = 100;
 		int upperBound = 150;
-		BadgeEntity badge1 = createEarnableBadgeWithThreshold(lowerBound);
-		BadgeEntity badge2 = createEarnableBadgeWithThreshold(upperBound);
-		entityManager.persist(badge1);
-		entityManager.persist(badge2);
-		entityManager.flush();
+		persistBadge(lowerBound, true);
+		persistBadge(upperBound, true);
 		
-		List<BadgeEntity> badges = badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(100, 150);
+		List<BadgeEntity> badges = badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(lowerBound, upperBound);
 		
 		assertEquals(2, badges.size());
 	}
 	
 	@Test
 	public void getByCanBeEarnedWithPointsTrueAndPointThresholdBetween_shouldNotGetUnearnableBadges() {
-		int threshold = 100;
-		BadgeEntity badge = new BadgeEntity();
-		badge.setPointThreshold(threshold);
-		entityManager.persist(badge);
-		entityManager.flush();
+		int threshold = 20;
+		persistBadge(threshold, false);
 		
 		List<BadgeEntity> badges = badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(threshold - 1, threshold + 1);
 		
 		assertEquals(0, badges.size());
 	}
 	
-	private BadgeEntity createEarnableBadgeWithThreshold(int threshold) {
-		return EntityBuilder.of(BadgeEntity::new)
-				.with(BadgeEntity::setCanBeEarnedWithPoints, true)
+	@Test
+	public void getFirstByCanBeEarnedWithPointsTrueAndPointThresholdGreaterThanOrderByPointThreshold_shouldGetNextBadgeWithThresholdClosestToValue() {
+		int threshold = 20;
+		persistBadge(threshold, true);
+		persistBadge(threshold + 1, false);
+		Optional<BadgeEntity> badge = badgeRepository.getFirstByCanBeEarnedWithPointsTrueAndPointThresholdGreaterThanOrderByPointThreshold(threshold - 1);
+		
+		assertTrue(badge.isPresent());
+		assertEquals(threshold, badge.get().getPointThreshold().intValue());
+	}
+	
+	private void persistBadge(int threshold, boolean earnable) {
+		BadgeEntity badge = EntityBuilder.of(BadgeEntity::new)
+				.with(BadgeEntity::setCanBeEarnedWithPoints, earnable)
 				.with(BadgeEntity::setPointThreshold, threshold)
 				.build();
+		
+		entityManager.persistAndFlush(badge);
 	}
 	
 }
