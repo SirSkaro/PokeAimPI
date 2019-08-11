@@ -55,6 +55,7 @@ hs_err_pid*
 
 # application configurations
 application.properties
+liquibase.properties
 
 # local debugging
 LoadDatabase.java

@@ -2,35 +2,38 @@ package skaro.pokeaimpi.repository.entities;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import javax.persistence.Table;
 
 import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "badge_award")
 public class BadgeAwardEntity implements PokeAimPIEntity {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id")
 	private UserEntity user;
 	
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id")
 	private BadgeEntity badge;
 
+	@Column(name = "awarded_on", nullable = false)
 	private Date awardDate;
 	
 	public BadgeAwardEntity() {

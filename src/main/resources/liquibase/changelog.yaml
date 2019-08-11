@@ -1,0 +1,113 @@
+databaseChangeLog:
+- changeSet:
+    id: 0
+    author: Benjamin Churchill
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: id
+            type: int
+            autoIncrement: true
+            constraints:
+                primaryKey: true
+        - column:
+            name: points
+            type: int
+            defaultValueNumeric: 0
+            constraints:
+                nullable: false
+        - column:
+            name: discord_id
+            type: bigint
+            constraints:
+                unique: true
+        - column:
+            name: twitch_user_name
+            type: varchar(64)
+            constraints:
+                unique: true
+        remarks: Initial user table
+        schemaName: pokeaimpi
+        tableName: user
+    - createTable:
+        columns:
+        - column:
+            name: id
+            type: int
+            autoIncrement: true
+            constraints:
+                primaryKey: true
+        - column:
+            name: point_threshold
+            type: int
+        - column:
+            name: earnable
+            type: bool
+            constraints:
+                nullable: false
+        - column:
+            name: image_uri
+            type: varchar(256)
+            constraints:
+                nullable: false
+        - column:
+            name: title
+            type: varchar(256)
+            constraints:
+                nullable: false
+        - column:
+            name: description
+            type: varchar(2048)
+            constraints:
+                nullable: false
+        - column:
+            name: discord_role_id
+            type: bigint
+            constraints:
+                unique: true
+                nullable: false
+        remarks: Initial badge table
+        schemaName: pokeaimpi
+        tableName: badge
+    - createTable:
+        columns:
+        - column:
+            name: id
+            type: int
+            autoIncrement: true
+            constraints:
+                primaryKey: true
+        - column:
+            name: user_id
+            type: int
+            constraints:
+                references: user(id)
+                foreignKeyName: award_user_fk
+                deleteCascade: true
+        - column:
+            name: badge_id
+            type: int
+            constraints:
+                references: badge(id)
+                foreignKeyName: award_badge_fk
+                deleteCascade: true
+        - column:
+            name: awarded_on
+            type: date
+            constraints:
+                nullable: false
+        remarks: Initial user-badge relationship table
+        schemaName: pokeaimpi
+        tableName: badge_award
+    rollback:
+      - dropTable:
+          tableName: user
+      - dropTable:
+          tableName: badge
+      - dropTable:
+          tableName: badge_award
+    modifySql:
+      - append:
+          value: ENGINE=INNODB DEFAULT CHARSET=utf8
+          dbms: mysql

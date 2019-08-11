@@ -1,17 +1,20 @@
 package skaro.pokeaimpi.services.implementations;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import skaro.pokeaimpi.repository.BadgeAwardRepository;
+import skaro.pokeaimpi.repository.BadgeRepository;
+import skaro.pokeaimpi.repository.UserRepository;
+import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
+import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
-import skaro.pokeaimpi.services.BadgeAwardService;
-import skaro.pokeaimpi.services.BadgeService;
 import skaro.pokeaimpi.services.PointService;
-import skaro.pokeaimpi.services.UserService;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.UserDTO;
@@ -20,74 +23,79 @@ import skaro.pokeaimpi.web.dtos.UserDTO;
 public class PointServiceImpl implements PointService {
 
 	@Autowired
-	private UserService userService;
+	private UserRepository userRepository;
 	@Autowired
-	private BadgeAwardService awardService;
+	private BadgeAwardRepository awardRepository;
 	@Autowired
-	private BadgeService badgeService;
+	private BadgeRepository badgeRepository;
 	@Autowired
 	private ModelMapper modelMapper;
 
 	@Override
 	public NewAwardsDTO addPointsViaDiscordId(Long discordId, int pointAmount) {
-		UserDTO user = userService.getByDiscordId(discordId)
+		UserEntity user = userRepository.getByDiscordId(discordId)
 				.orElseGet(() -> createUserWithDiscordId(discordId));
 		return awardPoints(user, pointAmount);
 	}
 
 	@Override
 	public NewAwardsDTO addPointsViaTwitchName(String twitchName, int pointAmount) {
-		UserDTO user = userService.getByTwitchName(twitchName)
-				.orElse(createUserWithTwitchName(twitchName));
+		UserEntity user = userRepository.getByTwitchUserName(twitchName)
+				.orElseGet(() -> createUserWithTwitchName(twitchName));
 		return awardPoints(user, pointAmount);
 	}
 	
-	private NewAwardsDTO awardPoints(UserDTO user, int pointAmount) {
+	private NewAwardsDTO awardPoints(UserEntity user, int pointAmount) {
 		int previousPointAmount = user.getPoints();
 		int newPointAmount = previousPointAmount + pointAmount;
 		
 		user = updatePointAmount(user, newPointAmount);
-		List<BadgeDTO> badgesToAward = badgeService.getBadgesBetween(previousPointAmount + 1, newPointAmount);
+		List<BadgeEntity> badgesToAward = badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(previousPointAmount + 1, newPointAmount);
 		
 		saveNewAwards(user, badgesToAward);
 		NewAwardsDTO result = createNewAwardsDTO(user, badgesToAward);
 		return result;
 	}
 	
-	private UserDTO createUserWithDiscordId(Long id) {
+	private UserEntity createUserWithDiscordId(Long id) {
 		UserEntity newUser =  EntityBuilder.of(UserEntity::new)
 				.with(UserEntity::setDiscordId, id)
 				.with(UserEntity::setPoints, 0)
 				.build();
 		
-		return modelMapper.map(newUser, UserDTO.class);
+		return userRepository.saveAndFlush(newUser);
 	}
 	
-	private UserDTO createUserWithTwitchName(String name) {
+	private UserEntity createUserWithTwitchName(String name) {
 		UserEntity newUser =  EntityBuilder.of(UserEntity::new)
 				.with(UserEntity::setTwitchUserName, name)
 				.with(UserEntity::setPoints, 0)
 				.build();
 		
-		return modelMapper.map(newUser, UserDTO.class);
+		return userRepository.saveAndFlush(newUser);
 	}
 	
-	private UserDTO updatePointAmount(UserDTO user, int newAmount) {
+	private UserEntity updatePointAmount(UserEntity user, int newAmount) {
 		user.setPoints(newAmount);
-		return userService.createOrUpdate(user);
+		return userRepository.saveAndFlush(user);
 	}
 	
-	private NewAwardsDTO createNewAwardsDTO(UserDTO user, List<BadgeDTO> badges) {
+	private NewAwardsDTO createNewAwardsDTO(UserEntity user, List<BadgeEntity> badges) {
 		NewAwardsDTO badgeAwardDTO = new NewAwardsDTO();
-		badgeAwardDTO.setBadges(badges);
-		badgeAwardDTO.setUser(user);
+		badgeAwardDTO.setUser(modelMapper.map(user, UserDTO.class));
+		
+		List<BadgeDTO> badgeDTOs = badges.stream()
+			.map(badgeEntity -> modelMapper.map(badgeEntity, BadgeDTO.class))
+			.collect(Collectors.toList());
+		badgeAwardDTO.setBadges(badgeDTOs);
 		
 		return badgeAwardDTO;
 	}
 	
-	private void saveNewAwards(UserDTO user, List<BadgeDTO> badges) {
-		for(BadgeDTO badge : badges) {
-			awardService.addBadgeAward(user, badge);
-		}
+	private List<BadgeAwardEntity> saveNewAwards(UserEntity user, List<BadgeEntity> badges) {
+		return badges.stream()
+			.map(badge -> new BadgeAwardEntity(user, badge))
+			.map(award -> awardRepository.save(award))
+			.collect(Collectors.toList());
 	}
 }
