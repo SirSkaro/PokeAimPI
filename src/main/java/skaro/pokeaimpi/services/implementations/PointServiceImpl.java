@@ -63,7 +63,7 @@ public class PointServiceImpl implements PointService {
 				.with(UserEntity::setPoints, 0)
 				.build();
 		
-		return userRepository.saveAndFlush(newUser);
+		return userRepository.save(newUser);
 	}
 	
 	private UserEntity createUserWithTwitchName(String name) {
@@ -72,12 +72,12 @@ public class PointServiceImpl implements PointService {
 				.with(UserEntity::setPoints, 0)
 				.build();
 		
-		return userRepository.saveAndFlush(newUser);
+		return userRepository.save(newUser);
 	}
 	
 	private UserEntity updatePointAmount(UserEntity user, int newAmount) {
 		user.setPoints(newAmount);
-		return userRepository.saveAndFlush(user);
+		return userRepository.save(user);
 	}
 	
 	private NewAwardsDTO createNewAwardsDTO(UserEntity user, List<BadgeEntity> badges) {

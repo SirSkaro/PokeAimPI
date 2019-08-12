@@ -112,7 +112,7 @@ public class ProgressServiceImplTest {
 	@Test
 	public void getByDiscordId_shouldGetProgressForNewUser_whenUserDoesNotExists() {
 		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.empty());
-		Mockito.when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).thenReturn(new UserEntity());
+		Mockito.when(userRepository.saveAndFlush(ArgumentMatchers.any(UserEntity.class))).thenReturn(new UserEntity());
 		Mockito.when(awardRepository.findByUserDiscordIdOrderByBadgePointThresholdDesc(discordId)).thenReturn(new ArrayList<BadgeAwardEntity>());
 		
 		userDTO.setPoints(0);
