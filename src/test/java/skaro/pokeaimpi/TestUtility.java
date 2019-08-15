@@ -8,6 +8,9 @@ import org.springframework.http.MediaType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import skaro.pokeaimpi.repository.entities.BadgeEntity;
+import skaro.pokeaimpi.repository.entities.EntityBuilder;
+import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.web.dtos.DiscordConnection;
 import skaro.pokeaimpi.web.dtos.SocialProfile;
 import skaro.pokeaimpi.web.dtos.TwitchConnection;
@@ -34,6 +37,23 @@ public class TestUtility {
 		result.setPoints(0);
 		
 		return result;
+    }
+    
+    public static UserEntity createEmptyValidUserEntity() {
+    	return EntityBuilder.of(UserEntity::new)
+    			.with(UserEntity::setPoints, 0)
+    			.build();
+    }
+    
+    public static BadgeEntity createEmptyValidBadgeEntity() {
+    	return EntityBuilder.of(BadgeEntity::new)
+				.with(BadgeEntity::setCanBeEarnedWithPoints, false)
+				.with(BadgeEntity::setPointThreshold, 0)
+				.with(BadgeEntity::setDescription, "test description")
+				.with(BadgeEntity::setImageUri, "/dummypath/test.png")
+				.with(BadgeEntity::setTitle, "test badge")
+				.with(BadgeEntity::setDiscordRoleId, 0L)
+				.build();
     }
     
 }

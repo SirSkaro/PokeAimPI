@@ -6,40 +6,38 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import skaro.pokeaimpi.PokeAimPIConfig;
+import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DataJpaTest
-@ContextConfiguration(classes= { PokeAimPIConfig.class} )
-@EnableAutoConfiguration(exclude = { JpaRepositoriesAutoConfiguration.class })
 @AutoConfigureTestDatabase(replace=Replace.NONE)
 public class UserRepositoryTest {
 	
 	@Autowired
-    private TestEntityManager entityManager;
-	@Autowired
 	private UserRepository userRepository;
+	private Long discordId;
+	
+	@Before
+	public void setup() {
+		discordId = 1L;
+		UserEntity testUser = TestUtility.createEmptyValidUserEntity();
+		testUser.setDiscordId(discordId);
+		
+		userRepository.save(testUser);
+	}
 	
 	@Test
 	public void getByDiscordId_shouldGetUserWithDiscordId_whenUserExists() {
-		UserEntity user = new UserEntity();
-		Long discordId = 1L;
-		user.setDiscordId(discordId);
-		entityManager.persist(user);
-		entityManager.flush();
 		
 		Optional<UserEntity> foundUser = userRepository.getByDiscordId(discordId);
 		assertTrue(foundUser.isPresent());
