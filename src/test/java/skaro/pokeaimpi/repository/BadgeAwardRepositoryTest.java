@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,10 @@ public class BadgeAwardRepositoryTest {
 
 	@Autowired
 	private BadgeAwardRepository awardRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private BadgeRepository badgeRepository;
 	
 	private Long discordId;
 	private UserEntity testUser;
@@ -35,6 +40,12 @@ public class BadgeAwardRepositoryTest {
 		discordId = 119876786L;
 		testUser = TestUtility.createEmptyValidUserEntity();
 		testUser.setDiscordId(discordId);
+		testUser = userRepository.save(testUser);
+	}
+	
+	@After
+	public void teardown() {
+		userRepository.delete(testUser);
 	}
 	
 	@Test
@@ -43,9 +54,9 @@ public class BadgeAwardRepositoryTest {
 		int middleThreshold = 40;
 		int lowestThreshold = 30;
 		
-		persistAward(lowestThreshold, discordId);
-		persistAward(largestThreshold, discordId);
-		persistAward(middleThreshold, discordId);
+		BadgeAwardEntity lowestAward = persistAward(lowestThreshold, discordId);
+		BadgeAwardEntity largestAward = persistAward(largestThreshold, discordId);
+		BadgeAwardEntity middleAward = persistAward(middleThreshold, discordId);
 
 		List<BadgeAwardEntity> awards = awardRepository.findByUserDiscordIdSortThresholdDesc(discordId);
 		
@@ -53,9 +64,13 @@ public class BadgeAwardRepositoryTest {
 		assertEquals(largestThreshold, awards.get(0).getBadge().getPointThreshold().intValue());
 		assertEquals(middleThreshold, awards.get(1).getBadge().getPointThreshold().intValue());
 		assertEquals(lowestThreshold, awards.get(2).getBadge().getPointThreshold().intValue());
+		
+		deleteAward(lowestAward);
+		deleteAward(largestAward);
+		deleteAward(middleAward);
 	}
 	
-	private void persistAward(int threshold, long discordId) {
+	private BadgeAwardEntity persistAward(int threshold, long discordId) {
 		BadgeEntity badge = TestUtility.createEmptyValidBadgeEntity();
 		badge.setPointThreshold(threshold);
 		badge.setDiscordRoleId((long)threshold);
@@ -65,7 +80,13 @@ public class BadgeAwardRepositoryTest {
 				.with(BadgeAwardEntity::setUser, testUser)
 				.build();
 		
-		awardRepository.save(award);
+		return awardRepository.save(award);
+	}
+	
+	private void deleteAward(BadgeAwardEntity award) {
+		BadgeEntity badge = award.getBadge();
+		awardRepository.delete(award);
+		badgeRepository.delete(badge);
 	}
 	
 }
