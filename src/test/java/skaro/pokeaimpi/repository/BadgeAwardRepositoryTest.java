@@ -38,7 +38,7 @@ public class BadgeAwardRepositoryTest {
 	}
 	
 	@Test
-	public void findByUserDiscordIdOrderByBadgePointThresholdDesc_shouldGetAwardsForUserInDecendingOrderOfThreshold() {
+	public void findByUserDiscordIdSortThresholdDesc_shouldGetAwardsForUserInDecendingOrderOfThreshold() {
 		int largestThreshold = 50;
 		int middleThreshold = 40;
 		int lowestThreshold = 30;
@@ -47,7 +47,7 @@ public class BadgeAwardRepositoryTest {
 		persistAward(largestThreshold, discordId);
 		persistAward(middleThreshold, discordId);
 
-		List<BadgeAwardEntity> awards = awardRepository.findByUserDiscordIdOrderByBadgePointThresholdDesc(discordId);
+		List<BadgeAwardEntity> awards = awardRepository.findByUserDiscordIdSortThresholdDesc(discordId);
 		
 		assertEquals(3, awards.size());
 		assertEquals(largestThreshold, awards.get(0).getBadge().getPointThreshold().intValue());
