@@ -106,7 +106,6 @@ public class ProgressServiceImplTest {
 		assertEquals(discordRoleId, progress.getNextBadge().getDiscordRoleId());
 		assertEquals(nextBadgeThreshold, progress.getNextBadge().getPointThreshold().intValue());
 		assertEquals(threshold, progress.getCurrentHighestBadge().getPointThreshold().intValue());
-		
 	}
 	
 	@Test
