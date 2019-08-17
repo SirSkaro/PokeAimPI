@@ -1,25 +1,45 @@
 package skaro.pokeaimpi.repository.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "badge")
 public class BadgeEntity implements PokeAimPIEntity {
 
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id")
     private Integer id;
+	
+	@Column(name = "point_threshold")
 	private Integer pointThreshold;
+	
+	@Column(name = "earnable", nullable = false)
 	private Boolean canBeEarnedWithPoints;
+	
+	@Column(name = "image_uri", nullable = false)
 	private String imageUri;
+	
+	@Column(name = "title", nullable = false)
 	private String title;
+	
+	@Column(name = "description", nullable = false)
 	private String description;
+	
+	@Column(name = "discord_role_id", unique = true, nullable = false)
 	private Long discordRoleId;
+	
+	public BadgeEntity() {
+		
+	}
 	
 	public Integer getId() {
 		return id;

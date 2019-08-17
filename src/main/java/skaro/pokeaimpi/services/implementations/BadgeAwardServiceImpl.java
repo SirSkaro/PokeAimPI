@@ -60,7 +60,7 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	
 	@Override
 	public List<BadgeAwardDTO> getByUserDiscordId(Long discordId) {
-		return awardRepository.findByUserDiscordIdOrderByBadgePointThresholdDesc(discordId)
+		return awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)
 				.stream()
 				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
 				.collect(Collectors.toList());

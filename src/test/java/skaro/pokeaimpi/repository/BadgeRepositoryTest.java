@@ -10,30 +10,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import skaro.pokeaimpi.PokeAimPIConfig;
+import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
-import skaro.pokeaimpi.repository.entities.EntityBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DataJpaTest
-@ContextConfiguration(classes= { PokeAimPIConfig.class} )
-@EnableAutoConfiguration(exclude = { JpaRepositoriesAutoConfiguration.class })
 @AutoConfigureTestDatabase(replace=Replace.NONE)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BadgeRepositoryTest {
 
-	@Autowired
-    private TestEntityManager entityManager;
 	@Autowired
 	private BadgeRepository badgeRepository;
 	
@@ -76,12 +65,12 @@ public class BadgeRepositoryTest {
 	}
 	
 	private void persistBadge(int threshold, boolean earnable) {
-		BadgeEntity badge = EntityBuilder.of(BadgeEntity::new)
-				.with(BadgeEntity::setCanBeEarnedWithPoints, earnable)
-				.with(BadgeEntity::setPointThreshold, threshold)
-				.build();
+		BadgeEntity badge = TestUtility.createEmptyValidBadgeEntity();
+		badge.setPointThreshold(threshold);
+		badge.setCanBeEarnedWithPoints(earnable);
+		badge.setDiscordRoleId((long)threshold);
 		
-		entityManager.persistAndFlush(badge);
+		badgeRepository.save(badge);
 	}
 	
 }

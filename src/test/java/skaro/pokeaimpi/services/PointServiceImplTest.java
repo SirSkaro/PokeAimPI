@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
@@ -20,9 +21,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import skaro.pokeaimpi.TestUtility;
+import skaro.pokeaimpi.repository.BadgeAwardRepository;
+import skaro.pokeaimpi.repository.BadgeRepository;
+import skaro.pokeaimpi.repository.UserRepository;
+import skaro.pokeaimpi.repository.entities.BadgeEntity;
+import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.implementations.PointServiceImpl;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 
@@ -42,57 +47,60 @@ public class PointServiceImplTest {
 	@Autowired
 	private PointService pointService;
 	@MockBean
-	private UserService userService;
+	private UserRepository userRepository;
 	@MockBean
 	private ModelMapper modelMapper;
 	@MockBean
-	private BadgeService badgeService;
+	private BadgeRepository badgeRepository;
 	@MockBean
-	private BadgeAwardService awardService;
+	private BadgeAwardRepository awardRepository;
 	
 	@Before
 	public void setup() {
-		List<BadgeDTO> badges = Arrays.asList(new BadgeDTO(), new BadgeDTO());
-		Mockito.when(badgeService.getBadgesBetween(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt())).thenReturn(badges);
+		List<BadgeEntity> badges = Arrays.asList(new BadgeEntity(), new BadgeEntity());
+		Mockito.when(badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt())).thenReturn(badges);
 	}
 	
 	@Test
 	public void addPointsViaDiscordId_shouldReturnAwardWithBadges_whenBadgesAreEarnedAndUserExists() {
-		UserDTO user = TestUtility.createEmptyUserDTO();
 		Long discordId = 1L;
 		int pointsToAward = 10;
-		user.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
+		UserEntity user = EntityBuilder.of(UserEntity::new)
+				.with(UserEntity::setDiscordId, discordId)
+				.with(UserEntity::setPoints, 0)
+				.build();
+		UserDTO userDTO = TestUtility.createEmptyUserDTO();
+		userDTO.setPoints(pointsToAward);
+		userDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		
-		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.of(user));
-		Mockito.when(userService.createOrUpdate(user)).thenReturn(user);
+		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(user));
+		Mockito.when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).thenReturn(user);
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
 		
 		NewAwardsDTO awards = pointService.addPointsViaDiscordId(discordId, pointsToAward);
 		
 		assertEquals(pointsToAward, awards.getUser().getPoints().intValue());
 		assertEquals(2, awards.getBadges().size());
-		assertEquals(discordId, user.getSocialProfile().getDiscordConnection().getDiscordId());
-		Mockito.verify(userService, VerificationModeFactory.times(1)).createOrUpdate(ArgumentMatchers.any(UserDTO.class));
-		Mockito.verify(awardService, VerificationModeFactory.atLeastOnce()).addBadgeAward(ArgumentMatchers.any(UserDTO.class), ArgumentMatchers.any(BadgeDTO.class));
+		assertEquals(discordId, awards.getUser().getSocialProfile().getDiscordConnection().getDiscordId());
 	}
 	
 	@Test
 	public void addPointsViaDiscordId_shouldReturnAwardWithBadges_whenBadgesAreEarnedAndUserDoesNotExist() {
-		UserDTO user = TestUtility.createEmptyUserDTO();
 		Long discordId = 1L;
 		int pointsToAward = 10;
-		user.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
+		UserDTO userDTO = TestUtility.createEmptyUserDTO();
+		userDTO.setPoints(pointsToAward);
+		userDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		
-		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.empty());
-		Mockito.when(userService.createOrUpdate(user)).thenReturn(user);
-		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(user);
+		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.empty());
+		Mockito.when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).then(AdditionalAnswers.returnsFirstArg());
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
 		
 		NewAwardsDTO awards = pointService.addPointsViaDiscordId(discordId, pointsToAward);
 		
 		assertEquals(pointsToAward, awards.getUser().getPoints().intValue());
 		assertEquals(2, awards.getBadges().size());
-		assertEquals(discordId, user.getSocialProfile().getDiscordConnection().getDiscordId());
-		Mockito.verify(userService, VerificationModeFactory.times(1)).createOrUpdate(ArgumentMatchers.any(UserDTO.class));
-		Mockito.verify(awardService, VerificationModeFactory.atLeastOnce()).addBadgeAward(ArgumentMatchers.any(UserDTO.class), ArgumentMatchers.any(BadgeDTO.class));
+		Mockito.verify(userRepository, VerificationModeFactory.atLeastOnce()).save(ArgumentMatchers.any(UserEntity.class));
 	}
 	
 }

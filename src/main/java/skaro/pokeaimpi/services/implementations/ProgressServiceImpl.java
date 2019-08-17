@@ -63,7 +63,7 @@ public class ProgressServiceImpl implements ProgressService {
 	}
 
 	private BadgeDTO getCurrentHighestBadge(Long discordId) {
-		List<BadgeAwardEntity> awards = awardRepository.findByUserDiscordIdOrderByBadgePointThresholdDesc(discordId);
+		List<BadgeAwardEntity> awards = awardRepository.findByUserDiscordIdSortThresholdDesc(discordId);
 		
 		if(awards.isEmpty()) {
 			return null;

@@ -94,7 +94,7 @@ public class ProgressServiceImplTest {
 		userDTO.setPoints(threshold);
 		
 		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(new UserEntity()));
-		Mockito.when(awardRepository.findByUserDiscordIdOrderByBadgePointThresholdDesc(discordId)).thenReturn(awards);
+		Mockito.when(awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)).thenReturn(awards);
 		Mockito.when(modelMapper.map(ArgumentMatchers.eq(awardedBadge), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(currentBadgeDTO);
 		
 		UserProgressDTO progress = progressService.getByDiscordId(discordId);
@@ -112,8 +112,8 @@ public class ProgressServiceImplTest {
 	@Test
 	public void getByDiscordId_shouldGetProgressForNewUser_whenUserDoesNotExists() {
 		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.empty());
-		Mockito.when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).thenReturn(new UserEntity());
-		Mockito.when(awardRepository.findByUserDiscordIdOrderByBadgePointThresholdDesc(discordId)).thenReturn(new ArrayList<BadgeAwardEntity>());
+		Mockito.when(userRepository.saveAndFlush(ArgumentMatchers.any(UserEntity.class))).thenReturn(new UserEntity());
+		Mockito.when(awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)).thenReturn(new ArrayList<BadgeAwardEntity>());
 		
 		userDTO.setPoints(0);
 		
@@ -131,7 +131,7 @@ public class ProgressServiceImplTest {
 	public void getByDiscordId_shouldGetProgressWithNoNextBadge_whenNoHigherBadgesAreAvailable() {
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(null);
 		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(new UserEntity()));
-		Mockito.when(awardRepository.findByUserDiscordIdOrderByBadgePointThresholdDesc(discordId)).thenReturn(new ArrayList<BadgeAwardEntity>());
+		Mockito.when(awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)).thenReturn(new ArrayList<BadgeAwardEntity>());
 		
 		UserProgressDTO progress = progressService.getByDiscordId(discordId);
 		
