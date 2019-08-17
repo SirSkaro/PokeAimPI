@@ -77,7 +77,7 @@ public class ProgressServiceImplTest {
 		BadgeEntity badgeEntity = new BadgeEntity();
 		
 		Mockito.when(badgeRepository.getFirstByCanBeEarnedWithPointsTrueAndPointThresholdGreaterThanOrderByPointThreshold(ArgumentMatchers.anyInt())).thenReturn(Optional.of(badgeEntity));
-		Mockito.when(modelMapper.map(ArgumentMatchers.eq(badgeEntity), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(nextBadgeDTO);
+		Mockito.when(modelMapper.map(ArgumentMatchers.same(badgeEntity), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(nextBadgeDTO);
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
 	}
 	
@@ -95,7 +95,7 @@ public class ProgressServiceImplTest {
 		
 		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(new UserEntity()));
 		Mockito.when(awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)).thenReturn(awards);
-		Mockito.when(modelMapper.map(ArgumentMatchers.eq(awardedBadge), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(currentBadgeDTO);
+		Mockito.when(modelMapper.map(ArgumentMatchers.same(awardedBadge), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(currentBadgeDTO);
 		
 		UserProgressDTO progress = progressService.getByDiscordId(discordId);
 		
