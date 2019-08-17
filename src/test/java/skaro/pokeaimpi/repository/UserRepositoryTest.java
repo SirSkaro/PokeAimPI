@@ -35,7 +35,7 @@ public class UserRepositoryTest {
 		testUser = TestUtility.createEmptyValidUserEntity();
 		testUser.setDiscordId(discordId);
 		
-		testUser = userRepository.save(testUser);
+		testUser = userRepository.saveAndFlush(testUser);
 	}
 	
 	@After
