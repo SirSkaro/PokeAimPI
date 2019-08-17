@@ -26,10 +26,6 @@ public class BadgeAwardRepositoryTest {
 
 	@Autowired
 	private BadgeAwardRepository awardRepository;
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private BadgeRepository badgeRepository;
 	
 	private Long discordId;
 	private UserEntity testUser;
@@ -39,7 +35,6 @@ public class BadgeAwardRepositoryTest {
 		discordId = 119876786L;
 		testUser = TestUtility.createEmptyValidUserEntity();
 		testUser.setDiscordId(discordId);
-		testUser = userRepository.save(testUser);
 	}
 	
 	@Test
@@ -47,12 +42,12 @@ public class BadgeAwardRepositoryTest {
 		int largestThreshold = 50;
 		int middleThreshold = 40;
 		int lowestThreshold = 30;
+		
 		persistAward(lowestThreshold, discordId);
 		persistAward(largestThreshold, discordId);
 		persistAward(middleThreshold, discordId);
-		
+
 		List<BadgeAwardEntity> awards = awardRepository.findByUserDiscordIdOrderByBadgePointThresholdDesc(discordId);
-		awards = awardRepository.findAll();
 		
 		assertEquals(3, awards.size());
 		assertEquals(largestThreshold, awards.get(0).getBadge().getPointThreshold().intValue());
@@ -64,7 +59,6 @@ public class BadgeAwardRepositoryTest {
 		BadgeEntity badge = TestUtility.createEmptyValidBadgeEntity();
 		badge.setPointThreshold(threshold);
 		badge.setDiscordRoleId((long)threshold);
-		badge = badgeRepository.save(badge);
 		
 		BadgeAwardEntity award = EntityBuilder.of(BadgeAwardEntity::new)
 				.with(BadgeAwardEntity::setBadge, badge)

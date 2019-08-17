@@ -85,6 +85,7 @@ databaseChangeLog:
                 references: user(id)
                 foreignKeyName: award_user_fk
                 deleteCascade: true
+                nullable: false
         - column:
             name: badge_id
             type: int
@@ -92,6 +93,7 @@ databaseChangeLog:
                 references: badge(id)
                 foreignKeyName: award_badge_fk
                 deleteCascade: true
+                nullable: false
         - column:
             name: awarded_on
             type: date

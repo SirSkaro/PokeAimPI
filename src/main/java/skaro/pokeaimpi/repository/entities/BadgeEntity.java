@@ -37,6 +37,10 @@ public class BadgeEntity implements PokeAimPIEntity {
 	@Column(name = "discord_role_id", unique = true, nullable = false)
 	private Long discordRoleId;
 	
+	public BadgeEntity() {
+		
+	}
+	
 	public Integer getId() {
 		return id;
 	}

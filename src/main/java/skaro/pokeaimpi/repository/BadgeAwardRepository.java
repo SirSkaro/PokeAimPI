@@ -16,6 +16,6 @@ public interface BadgeAwardRepository extends JpaRepository<BadgeAwardEntity, In
 	Optional<BadgeAwardEntity> findByBadgeIdAndUserId(Integer badgeId, Integer userId);
 	Optional<BadgeAwardEntity> findByBadgeDiscordRoleIdAndUserDiscordId(Long discordRoleId, Long discordId);
 	
-	@Query("SELECT award FROM BadgeAwardEntity award WHERE award.discordId = :discordId ORDER BY award.badge.pointThreshold DESC")
+	@Query("SELECT award FROM BadgeAwardEntity award WHERE award.user.discordId = :discordId ORDER BY award.badge.pointThreshold DESC")
 	List<BadgeAwardEntity> findByUserDiscordIdOrderByBadgePointThresholdDesc(@Param("discordId") Long discordId);
 }
