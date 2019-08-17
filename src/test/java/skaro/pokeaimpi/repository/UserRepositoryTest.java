@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,14 +27,20 @@ public class UserRepositoryTest {
 	@Autowired
 	private UserRepository userRepository;
 	private Long discordId;
+	private UserEntity testUser;
 	
 	@Before
 	public void setup() {
 		discordId = 1L;
-		UserEntity testUser = TestUtility.createEmptyValidUserEntity();
+		testUser = TestUtility.createEmptyValidUserEntity();
 		testUser.setDiscordId(discordId);
 		
 		userRepository.save(testUser);
+	}
+	
+	@After
+	public void teardown() {
+		userRepository.delete(testUser);
 	}
 	
 	@Test

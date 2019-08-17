@@ -25,11 +25,11 @@ public class BadgeAwardEntity implements PokeAimPIEntity {
 	@Column(name = "id")
 	private Integer id;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
 	private UserEntity user;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name ="badge_id", nullable = false, referencedColumnName = "id")
 	private BadgeEntity badge;
 
