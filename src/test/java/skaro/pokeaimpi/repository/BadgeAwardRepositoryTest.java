@@ -46,6 +46,9 @@ public class BadgeAwardRepositoryTest {
 	@After
 	public void teardown() {
 		userRepository.delete(testUser);
+		userRepository.flush();
+		badgeRepository.flush();
+		awardRepository.flush();
 	}
 	
 	@Test
