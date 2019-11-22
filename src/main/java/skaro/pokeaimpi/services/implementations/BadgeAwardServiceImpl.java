@@ -13,13 +13,12 @@ import skaro.pokeaimpi.repository.BadgeRepository;
 import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
-import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 import skaro.pokeaimpi.services.BadgeAwardService;
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
-import skaro.pokeaimpi.web.dtos.UserDTO;
+import skaro.pokeaimpi.web.exceptions.BadgeNotAwardableException;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
+import skaro.pokeaimpi.web.exceptions.BadgeRewardedException;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
 @Service
@@ -74,10 +73,19 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	
 	@Override
 	public BadgeAwardDTO addBadgeAward(Long userDiscordId, Long discordRoleId) {
-		UserEntity user = userRepository.getByDiscordId(userDiscordId)
-				.orElseThrow(() -> new SocialConnectionNotFoundException(userDiscordId));
 		BadgeEntity badge = badgeRepository.getByDiscordRoleId(discordRoleId)
 				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
+		
+		if(badge.getCanBeEarnedWithPoints()) {
+			throw new BadgeNotAwardableException(badge);
+		}
+		
+		UserEntity user = userRepository.getByDiscordId(userDiscordId)
+				.orElseThrow(() -> new SocialConnectionNotFoundException(userDiscordId));
+		
+		if(badgeAlreadyRewardedToUser(userDiscordId, discordRoleId)) {
+			throw new BadgeRewardedException(user, badge);
+		}
 		
 		BadgeAwardEntity badgeAward = awardRepository.save(new BadgeAwardEntity(user, badge));
 		return modelMapper.map(badgeAward, BadgeAwardDTO.class);
@@ -96,15 +104,9 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 		return awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId)
 				.map(award -> modelMapper.map(award, BadgeAwardDTO.class));
 	}
-
-	@Override
-	public BadgeAwardDTO addBadgeAward(UserDTO user, BadgeDTO badge) {
-		BadgeAwardEntity awardEntity = EntityBuilder.of(BadgeAwardEntity::new)
-				.with(BadgeAwardEntity::setUser, modelMapper.map(user, UserEntity.class))
-				.with(BadgeAwardEntity::setBadge, modelMapper.map(badge, BadgeEntity.class))
-				.build();
-		awardEntity = awardRepository.save(awardEntity);
-		return modelMapper.map(awardEntity, BadgeAwardDTO.class);
+	
+	private boolean badgeAlreadyRewardedToUser(Long userDiscordId, Long discordRoleId) {
+		return awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId).isPresent();
 	}
 
 }
