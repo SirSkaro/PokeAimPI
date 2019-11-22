@@ -18,6 +18,7 @@ import skaro.pokeaimpi.services.BadgeAwardService;
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotAwardableException;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
+import skaro.pokeaimpi.web.exceptions.BadgeRewardedException;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
 @Service
@@ -82,6 +83,10 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 		UserEntity user = userRepository.getByDiscordId(userDiscordId)
 				.orElseThrow(() -> new SocialConnectionNotFoundException(userDiscordId));
 		
+		if(badgeAlreadyRewardedToUser(userDiscordId, discordRoleId)) {
+			throw new BadgeRewardedException(user, badge);
+		}
+		
 		BadgeAwardEntity badgeAward = awardRepository.save(new BadgeAwardEntity(user, badge));
 		return modelMapper.map(badgeAward, BadgeAwardDTO.class);
 	}
@@ -98,6 +103,10 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	public Optional<BadgeAwardDTO> getByDiscordRoleIdAndUserDiscordId(Long discordRoleId, Long userDiscordId) {
 		return awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId)
 				.map(award -> modelMapper.map(award, BadgeAwardDTO.class));
+	}
+	
+	private boolean badgeAlreadyRewardedToUser(Long userDiscordId, Long discordRoleId) {
+		return awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId).isPresent();
 	}
 
 }

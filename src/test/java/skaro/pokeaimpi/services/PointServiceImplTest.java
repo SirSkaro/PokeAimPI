@@ -103,4 +103,31 @@ public class PointServiceImplTest {
 		Mockito.verify(userRepository, VerificationModeFactory.atLeastOnce()).save(ArgumentMatchers.any(UserEntity.class));
 	}
 	
+	@Test
+	public void addPointsViaDiscordId_shouldNotOverflowUserPoints_whenUserHasMaximumPoints() {
+		Long discordId = 1L;
+		int pointsToAward = 10;
+		UserEntity user = EntityBuilder.of(UserEntity::new)
+				.with(UserEntity::setDiscordId, discordId)
+				.with(UserEntity::setPoints, Integer.MAX_VALUE)
+				.build();
+		
+		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(user));
+		Mockito.when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).thenReturn(user);
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class)))
+			.thenAnswer(answer -> { 
+				UserDTO userDTO = TestUtility.createEmptyUserDTO();
+				int newAmount = ((UserEntity)answer.getArgument(0)).getPoints();
+				userDTO.setPoints(newAmount);
+				userDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
+				return userDTO;
+			});
+		
+		NewAwardsDTO awards = pointService.addPointsViaDiscordId(discordId, pointsToAward);
+		
+		assertEquals(Integer.MAX_VALUE, awards.getUser().getPoints().intValue());
+		assertEquals(0, awards.getBadges().size());
+		assertEquals(discordId, awards.getUser().getSocialProfile().getDiscordConnection().getDiscordId());
+	}
+	
 }

@@ -1,5 +1,6 @@
 package skaro.pokeaimpi.services.implementations;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,15 @@ public class PointServiceImpl implements PointService {
 	
 	private NewAwardsDTO awardPoints(UserEntity user, int pointAmount) {
 		int previousPointAmount = user.getPoints();
-		int newPointAmount = previousPointAmount + pointAmount;
+		int newPointAmount;
+		
+		if(previousPointAmount == Integer.MAX_VALUE) {
+			return createNewAwardsDTO(user, Arrays.asList());
+		} else if (isOverflow(previousPointAmount, pointAmount)) {
+			newPointAmount = Integer.MAX_VALUE;
+		} else {
+			newPointAmount = previousPointAmount + pointAmount;
+		}
 		
 		user = updatePointAmount(user, newPointAmount);
 		List<BadgeEntity> badgesToAward = badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(previousPointAmount + 1, newPointAmount);
@@ -73,6 +82,12 @@ public class PointServiceImpl implements PointService {
 				.build();
 		
 		return userRepository.save(newUser);
+	}
+	
+	private boolean isOverflow(int left, int right) {
+	    return right > 0
+	            ? Integer.MAX_VALUE - right < left
+	            : Integer.MIN_VALUE - right > left;
 	}
 	
 	private UserEntity updatePointAmount(UserEntity user, int newAmount) {

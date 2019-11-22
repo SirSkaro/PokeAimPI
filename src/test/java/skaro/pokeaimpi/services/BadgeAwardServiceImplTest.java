@@ -28,6 +28,7 @@ import skaro.pokeaimpi.services.implementations.BadgeAwardServiceImpl;
 import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotAwardableException;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
+import skaro.pokeaimpi.web.exceptions.BadgeRewardedException;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -99,5 +100,17 @@ public class BadgeAwardServiceImplTest {
 		awardService.addBadgeAward(0L, 0L);
 	}
 	
+	@Test(expected = BadgeRewardedException.class)
+	public void addBadgeAward_shouldThrowException_WhenUserAlreadyHasBadge() {
+		Long userDiscordId = 1L;
+		Long discordRoleId = 2L;
+		BadgeEntity badge = TestUtility.createEmptyValidBadgeEntity();
+		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.any())).thenReturn(Optional.of(badge));
+		Mockito.when(userRepository.getByDiscordId(userDiscordId)).thenReturn(Optional.of(new UserEntity()));
+		Mockito.when(awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId))
+			.thenReturn(Optional.of(new BadgeAwardEntity()));
+		
+		awardService.addBadgeAward(userDiscordId, discordRoleId);
+	}
 	
 }
