@@ -63,7 +63,7 @@ public class BadgeServiceImplTest {
 	@Test
 	public void getByDiscordRoleId_shouldGetBadgeWithDiscordRoleId_whenBadgeExists() {
 		BadgeDTO badgeDTO = new BadgeDTO();
-		Long roleId = 1L;
+		String roleId = "1";
 		badgeDTO.setDiscordRoleId(roleId);
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(badgeDTO);
 		Mockito.when(badgeRepository.getByDiscordRoleId(roleId)).thenReturn(Optional.of(new BadgeEntity()));
@@ -88,9 +88,9 @@ public class BadgeServiceImplTest {
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(new BadgeDTO());
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeDTO.class), ArgumentMatchers.same(BadgeEntity.class))).thenReturn(new BadgeEntity());
 		Mockito.when(badgeRepository.save(ArgumentMatchers.any(BadgeEntity.class))).thenReturn(new BadgeEntity());
-		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.anyLong())).thenReturn(Optional.of(new BadgeEntity()));
+		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.anyString())).thenReturn(Optional.of(new BadgeEntity()));
 		
-		badgeService.updateBadgeByDiscordRoleId(0L, new BadgeDTO());
+		badgeService.updateBadgeByDiscordRoleId("0", new BadgeDTO());
 		Mockito.verify(badgeRepository, VerificationModeFactory.times(1)).save(ArgumentMatchers.any(BadgeEntity.class));
 	}
 	

@@ -4,7 +4,6 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
 
 import lombok.Data;
 
@@ -23,8 +22,8 @@ public class BadgeDTO {
 	private String title;
 	@NotEmpty(message = "badge must have a description")
 	private String description;
-	@Positive(message = "badge must have a valid Discord role id")
-	private Long discordRoleId;
+	@NotEmpty(message = "badge must have a valid Discord role id")
+	private String discordRoleId;
 	
 	
 	public Integer getId() {
@@ -63,10 +62,10 @@ public class BadgeDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Long getDiscordRoleId() {
+	public String getDiscordRoleId() {
 		return discordRoleId;
 	}
-	public void setDiscordRoleId(Long discordRoleId) {
+	public void setDiscordRoleId(String discordRoleId) {
 		this.discordRoleId = discordRoleId;
 	}
 	

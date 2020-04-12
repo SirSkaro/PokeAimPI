@@ -38,7 +38,7 @@ public class BadgeController {
 	}
 	
 	@GetMapping("/discord/{id}")
-	public BadgeDTO getByDiscordRoleId(@PathVariable(value="id") Long discordRoleId) {
+	public BadgeDTO getByDiscordRoleId(@PathVariable(value="id") String discordRoleId) {
 		return badgeService.getByDiscordRoleId(discordRoleId)
 				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 	}
@@ -50,7 +50,7 @@ public class BadgeController {
 	}
 	
 	@PutMapping("/discord/{id}")
-	public void updateBadge(@PathVariable(value="id") Long discordRoleId, @RequestBody @Valid BadgeDTO badge) {
+	public void updateBadge(@PathVariable(value="id") String discordRoleId, @RequestBody @Valid BadgeDTO badge) {
 		badgeService.updateBadgeByDiscordRoleId(discordRoleId, badge)
 			.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 	}

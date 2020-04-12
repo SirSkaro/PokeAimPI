@@ -12,7 +12,7 @@ public class BadgeAwardNotFoundException extends RuntimeException {
 		super("Could not find award for user " + userId + " and badge "+ badgeId);
 	}
 
-	public BadgeAwardNotFoundException(Long discordRoleId, Long userDiscordId) {
+	public BadgeAwardNotFoundException(String discordRoleId, String userDiscordId) {
 		super("Could not find award for user with Discord id" + userDiscordId + " and badge with Discord role id "+ discordRoleId);
 	}
 

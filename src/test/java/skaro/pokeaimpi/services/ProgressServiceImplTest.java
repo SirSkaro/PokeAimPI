@@ -57,16 +57,16 @@ public class ProgressServiceImplTest {
 	
 	private int threshold;
 	private int nextBadgeThreshold;
-	private Long discordId;
-	private Long discordRoleId;
+	private String discordId;
+	private String discordRoleId;
 	private UserDTO userDTO;
 	
 	@Before
 	public void setup() {
 		threshold = 10;
 		nextBadgeThreshold = 2 * threshold;
-		discordId = 1L;
-		discordRoleId = 2L;
+		discordId = "1";
+		discordRoleId = "2";
 		userDTO = TestUtility.createEmptyUserDTO();
 		userDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		

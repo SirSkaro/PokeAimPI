@@ -35,7 +35,7 @@ public class BadgeEntity implements PokeAimPIEntity {
 	private String description;
 	
 	@Column(name = "discord_role_id", unique = true, nullable = false)
-	private Long discordRoleId;
+	private String discordRoleId;
 	
 	public BadgeEntity() {
 		
@@ -77,10 +77,10 @@ public class BadgeEntity implements PokeAimPIEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Long getDiscordRoleId() {
+	public String getDiscordRoleId() {
 		return discordRoleId;
 	}
-	public void setDiscordRoleId(Long discordRoleId) {
+	public void setDiscordRoleId(String discordRoleId) {
 		this.discordRoleId = discordRoleId;
 	}
 	

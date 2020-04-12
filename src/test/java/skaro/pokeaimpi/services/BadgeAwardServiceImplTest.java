@@ -57,8 +57,8 @@ public class BadgeAwardServiceImplTest {
 	
 	@Test
 	public void addBadgeAward_shouldReturnBadgeAwardDTO_WhenUserAndBadgeExist() {
-		Long userDiscordId = 1L;
-		Long discordRoleId = 2L;
+		String userDiscordId = "1";
+		String discordRoleId = "2";
 		BadgeEntity badge = TestUtility.createEmptyValidBadgeEntity();
 		
 		Mockito.when(userRepository.getByDiscordId(userDiscordId)).thenReturn(Optional.of(new UserEntity()));
@@ -73,21 +73,21 @@ public class BadgeAwardServiceImplTest {
 	
 	@Test(expected = SocialConnectionNotFoundException.class)
 	public void addBadgeAward_shouldThrowException_WhenUserDoesNotExist() {
-		Long userDiscordId = 1L;
+		String userDiscordId = "1";
 		BadgeEntity badge = TestUtility.createEmptyValidBadgeEntity();
 		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.any())).thenReturn(Optional.of(badge));
 		Mockito.when(userRepository.getByDiscordId(userDiscordId)).thenReturn(Optional.empty());
 		
-		awardService.addBadgeAward(userDiscordId, 0L);
+		awardService.addBadgeAward(userDiscordId, "0");
 	}
 	
 	@Test(expected = BadgeNotFoundException.class)
 	public void addBadgeAward_shouldThrowException_WhenBadgeDoesNotExist() {
-		Long discordRoleId = 1L;
-		Mockito.when(userRepository.getByDiscordId(ArgumentMatchers.anyLong())).thenReturn(Optional.of(new UserEntity()));
+		String discordRoleId = "1";
+		Mockito.when(userRepository.getByDiscordId(ArgumentMatchers.anyString())).thenReturn(Optional.of(new UserEntity()));
 		Mockito.when(badgeRepository.getByDiscordRoleId(discordRoleId)).thenReturn(Optional.empty());
 		
-		awardService.addBadgeAward(0L, discordRoleId);
+		awardService.addBadgeAward("0", discordRoleId);
 	}
 	
 	@Test(expected = BadgeNotAwardableException.class)
@@ -97,13 +97,13 @@ public class BadgeAwardServiceImplTest {
 				.build();
 		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.any())).thenReturn(Optional.of(earnableBadge));
 		
-		awardService.addBadgeAward(0L, 0L);
+		awardService.addBadgeAward("0", "0");
 	}
 	
 	@Test(expected = BadgeRewardedException.class)
 	public void addBadgeAward_shouldThrowException_WhenUserAlreadyHasBadge() {
-		Long userDiscordId = 1L;
-		Long discordRoleId = 2L;
+		String userDiscordId = "1";
+		String discordRoleId = "2";
 		BadgeEntity badge = TestUtility.createEmptyValidBadgeEntity();
 		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.any())).thenReturn(Optional.of(badge));
 		Mockito.when(userRepository.getByDiscordId(userDiscordId)).thenReturn(Optional.of(new UserEntity()));

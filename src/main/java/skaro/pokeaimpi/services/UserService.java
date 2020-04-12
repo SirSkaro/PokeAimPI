@@ -9,7 +9,7 @@ public interface UserService {
 
 	public List<UserDTO> getAll();
 	public UserDTO createOrUpdate(UserDTO user);
-	public Optional<UserDTO> getByDiscordId(Long id);
+	public Optional<UserDTO> getByDiscordId(String id);
 	public Optional<UserDTO> getByTwitchName(String name);
 	
 }

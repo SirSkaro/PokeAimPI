@@ -12,10 +12,10 @@ import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 public interface BadgeAwardRepository extends JpaRepository<BadgeAwardEntity, Integer> {
 	List<BadgeAwardEntity> findByUserId(Integer id);
 	List<BadgeAwardEntity> findByBadgeId(Integer id);
-	List<BadgeAwardEntity> findByBadgeDiscordRoleId(Long discordRoleId);
+	List<BadgeAwardEntity> findByBadgeDiscordRoleId(String discordRoleId);
 	Optional<BadgeAwardEntity> findByBadgeIdAndUserId(Integer badgeId, Integer userId);
-	Optional<BadgeAwardEntity> findByBadgeDiscordRoleIdAndUserDiscordId(Long discordRoleId, Long discordId);
+	Optional<BadgeAwardEntity> findByBadgeDiscordRoleIdAndUserDiscordId(String discordRoleId, String discordId);
 	
 	@Query("SELECT award FROM BadgeAwardEntity award WHERE award.user.discordId = :discordId ORDER BY award.badge.pointThreshold DESC")
-	List<BadgeAwardEntity> findByUserDiscordIdSortThresholdDesc(@Param("discordId") Long discordId);
+	List<BadgeAwardEntity> findByUserDiscordIdSortThresholdDesc(@Param("discordId") String discordId);
 }

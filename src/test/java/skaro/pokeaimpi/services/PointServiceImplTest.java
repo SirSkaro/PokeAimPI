@@ -63,7 +63,7 @@ public class PointServiceImplTest {
 	
 	@Test
 	public void addPointsViaDiscordId_shouldReturnAwardWithBadges_whenBadgesAreEarnedAndUserExists() {
-		Long discordId = 1L;
+		String discordId = "1";
 		int pointsToAward = 10;
 		UserEntity user = EntityBuilder.of(UserEntity::new)
 				.with(UserEntity::setDiscordId, discordId)
@@ -86,7 +86,7 @@ public class PointServiceImplTest {
 	
 	@Test
 	public void addPointsViaDiscordId_shouldReturnAwardWithBadges_whenBadgesAreEarnedAndUserDoesNotExist() {
-		Long discordId = 1L;
+		String discordId = "1";
 		int pointsToAward = 10;
 		UserDTO userDTO = TestUtility.createEmptyUserDTO();
 		userDTO.setPoints(pointsToAward);
@@ -105,7 +105,7 @@ public class PointServiceImplTest {
 	
 	@Test
 	public void addPointsViaDiscordId_shouldNotOverflowUserPoints_whenUserHasMaximumPoints() {
-		Long discordId = 1L;
+		String discordId = "1";
 		int pointsToAward = 10;
 		UserEntity user = EntityBuilder.of(UserEntity::new)
 				.with(UserEntity::setDiscordId, discordId)

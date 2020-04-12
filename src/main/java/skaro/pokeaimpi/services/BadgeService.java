@@ -9,9 +9,9 @@ public interface BadgeService {
 	
 	public List<BadgeDTO> getAll();
 	public Optional<BadgeDTO> getById(Integer id);
-	public Optional<BadgeDTO> getByDiscordRoleId(Long discordRoleId);
+	public Optional<BadgeDTO> getByDiscordRoleId(String discordRoleId);
 	public List<BadgeDTO> getBadgesBetween(int floor, int ceiling);
 	public BadgeDTO saveBadge(BadgeDTO badge);
-	public Optional<BadgeDTO> updateBadgeByDiscordRoleId(Long discordRoleId, BadgeDTO badge);
+	public Optional<BadgeDTO> updateBadgeByDiscordRoleId(String discordRoleId, BadgeDTO badge);
 	
 }

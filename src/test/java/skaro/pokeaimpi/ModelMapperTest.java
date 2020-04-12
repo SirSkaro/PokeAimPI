@@ -28,7 +28,7 @@ public class ModelMapperTest {
 		
 		UserEntity entity = EntityBuilder.of(UserEntity::new)
 				.with(UserEntity::setId, 1)
-				.with(UserEntity::setDiscordId, 1234L)
+				.with(UserEntity::setDiscordId, "1234")
 				.with(UserEntity::setPoints, 100)
 				.with(UserEntity::setTwitchUserName, "pokeaim")
 				.build();
@@ -58,7 +58,7 @@ public class ModelMapperTest {
 		SocialProfile profile = new SocialProfile();
 		DiscordConnection discordConnection = new DiscordConnection();
 		TwitchConnection twitchConnection = new TwitchConnection();
-		discordConnection.setDiscordId(1L);
+		discordConnection.setDiscordId("1");
 		twitchConnection.setUserName("axe");
 		profile.setDiscordConnection(discordConnection);
 		profile.setTwitchConnection(twitchConnection);

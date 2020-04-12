@@ -44,7 +44,7 @@ public class BadgeServiceImpl implements BadgeService {
 	}
 
 	@Override
-	public Optional<BadgeDTO> getByDiscordRoleId(Long discordRoleId) {
+	public Optional<BadgeDTO> getByDiscordRoleId(String discordRoleId) {
 		return badgeRepository.getByDiscordRoleId(discordRoleId)
 				.map(badge -> modelMapper.map(badge, BadgeDTO.class));
 	}
@@ -58,7 +58,7 @@ public class BadgeServiceImpl implements BadgeService {
 	}
 
 	@Override
-	public Optional<BadgeDTO> updateBadgeByDiscordRoleId(Long discordRoleId, BadgeDTO badge) {
+	public Optional<BadgeDTO> updateBadgeByDiscordRoleId(String discordRoleId, BadgeDTO badge) {
 		BadgeEntity updatedBadgeEntity = modelMapper.map(badge, BadgeEntity.class);
 		return badgeRepository.getByDiscordRoleId(discordRoleId)
 				.map(entity -> setEntityId(updatedBadgeEntity, entity.getId()))

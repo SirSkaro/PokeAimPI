@@ -58,7 +58,7 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	}
 	
 	@Override
-	public List<BadgeAwardDTO> getByUserDiscordId(Long discordId) {
+	public List<BadgeAwardDTO> getByUserDiscordId(String discordId) {
 		return awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)
 				.stream()
 				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
@@ -72,7 +72,7 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	}
 	
 	@Override
-	public BadgeAwardDTO addBadgeAward(Long userDiscordId, Long discordRoleId) {
+	public BadgeAwardDTO addBadgeAward(String userDiscordId, String discordRoleId) {
 		BadgeEntity badge = badgeRepository.getByDiscordRoleId(discordRoleId)
 				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 		
@@ -92,7 +92,7 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	}
 
 	@Override
-	public List<BadgeAwardDTO> getByBadgeDiscordRoleId(Long discordId) {
+	public List<BadgeAwardDTO> getByBadgeDiscordRoleId(String discordId) {
 		return awardRepository.findByBadgeDiscordRoleId(discordId)
 				.stream()
 				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
@@ -100,12 +100,12 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	}
 
 	@Override
-	public Optional<BadgeAwardDTO> getByDiscordRoleIdAndUserDiscordId(Long discordRoleId, Long userDiscordId) {
+	public Optional<BadgeAwardDTO> getByDiscordRoleIdAndUserDiscordId(String discordRoleId, String userDiscordId) {
 		return awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId)
 				.map(award -> modelMapper.map(award, BadgeAwardDTO.class));
 	}
 	
-	private boolean badgeAlreadyRewardedToUser(Long userDiscordId, Long discordRoleId) {
+	private boolean badgeAlreadyRewardedToUser(String userDiscordId, String discordRoleId) {
 		return awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId).isPresent();
 	}
 
