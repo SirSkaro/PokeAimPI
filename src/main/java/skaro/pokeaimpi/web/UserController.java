@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import skaro.pokeaimpi.services.PointService;
@@ -38,18 +37,18 @@ public class UserController {
 	}
 	
 	@GetMapping
-	public @ResponseBody List<UserDTO> getAll() {
+	public List<UserDTO> getAll() {
 		return userService.getAll();
 	}
 	
 	@GetMapping("/discord/{id}")
-	public UserDTO getByDiscordId(@PathVariable(value="id") Long id) {
+	public UserDTO getByDiscordId(@PathVariable(value="id") String id) {
 		return userService.getByDiscordId(id)
 				.orElseThrow(() -> new SocialConnectionNotFoundException(id));
 	}
 	
 	@GetMapping("/discord/{id}/progress")
-	public UserProgressDTO getProgressByDiscordId(@PathVariable(value="id") Long id) {
+	public UserProgressDTO getProgressByDiscordId(@PathVariable(value="id") String id) {
 		return progressService.getByDiscordId(id);
 	}
 	
@@ -60,7 +59,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/discord/{id}/points/add")
-	public NewAwardsDTO addPointsByDiscordId(@PathVariable(value="id") Long id, @Valid @RequestBody PointsDTO pointRequest) {
+	public NewAwardsDTO addPointsByDiscordId(@PathVariable(value="id") String id, @Valid @RequestBody PointsDTO pointRequest) {
 		return pointService.addPointsViaDiscordId(id, pointRequest.getAmount());
 	}
 	

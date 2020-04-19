@@ -33,7 +33,7 @@ public class PointServiceImpl implements PointService {
 	private ModelMapper modelMapper;
 
 	@Override
-	public NewAwardsDTO addPointsViaDiscordId(Long discordId, int pointAmount) {
+	public NewAwardsDTO addPointsViaDiscordId(String discordId, int pointAmount) {
 		UserEntity user = userRepository.getByDiscordId(discordId)
 				.orElseGet(() -> createUserWithDiscordId(discordId));
 		return awardPoints(user, pointAmount);
@@ -66,7 +66,7 @@ public class PointServiceImpl implements PointService {
 		return result;
 	}
 	
-	private UserEntity createUserWithDiscordId(Long id) {
+	private UserEntity createUserWithDiscordId(String id) {
 		UserEntity newUser =  EntityBuilder.of(UserEntity::new)
 				.with(UserEntity::setDiscordId, id)
 				.with(UserEntity::setPoints, 0)

@@ -52,7 +52,7 @@ public class TestUtility {
 				.with(BadgeEntity::setDescription, "test description")
 				.with(BadgeEntity::setImageUri, "/dummypath/test.png")
 				.with(BadgeEntity::setTitle, "test badge")
-				.with(BadgeEntity::setDiscordRoleId, 0L)
+				.with(BadgeEntity::setDiscordRoleId, "0")
 				.build();
     }
     

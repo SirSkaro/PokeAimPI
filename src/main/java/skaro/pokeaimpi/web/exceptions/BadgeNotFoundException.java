@@ -12,7 +12,7 @@ public class BadgeNotFoundException extends RuntimeException {
 		super("Could not find user with id " + id);
 	}
 	
-	public BadgeNotFoundException(Long discordRoleId) {
+	public BadgeNotFoundException(String discordRoleId) {
 		super("Could not find user with Discord role id " + discordRoleId);
 	}
 	

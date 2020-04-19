@@ -39,12 +39,12 @@ public class BadgeAwardController {
 	}
 	
 	@GetMapping(params={"userDiscordId"})
-	public List<BadgeAwardDTO> getByUserDiscordId(@RequestParam("userDiscordId") Long userDiscordId) {
+	public List<BadgeAwardDTO> getByUserDiscordId(@RequestParam("userDiscordId") String userDiscordId) {
 		return badgeAwardService.getByUserDiscordId(userDiscordId);
 	}
 	
 	@GetMapping(params={"discordRoleId"})
-	public List<BadgeAwardDTO> getByBadgeDiscordRoleId(@RequestParam("discordRoleId") Long discordRoleId) {
+	public List<BadgeAwardDTO> getByBadgeDiscordRoleId(@RequestParam("discordRoleId") String discordRoleId) {
 		return badgeAwardService.getByBadgeDiscordRoleId(discordRoleId);
 	}
 	
@@ -55,14 +55,14 @@ public class BadgeAwardController {
 	}
 	
 	@GetMapping(params={"discordRoleId", "userDiscordId"})
-	public BadgeAwardDTO getByBadgeDiscordRoleIdAndUserDiscordId(@RequestParam("discordRoleId") Long discordRoleId, @RequestParam("userDiscordId") Long userDiscordId) {
+	public BadgeAwardDTO getByBadgeDiscordRoleIdAndUserDiscordId(@RequestParam("discordRoleId") String discordRoleId, @RequestParam("userDiscordId") String userDiscordId) {
 		return badgeAwardService.getByDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId)
 			.orElseThrow(() -> new BadgeAwardNotFoundException(discordRoleId, userDiscordId));
 	}
 	
 	@PostMapping("/discord/user/{userDiscordId}/role/{discordRoleId}")
 	@ResponseStatus(HttpStatus.CREATED)
-	public BadgeAwardDTO awardBadge(@PathVariable("userDiscordId") Long userDiscordId, @PathVariable("discordRoleId") Long discordRoleId) {
+	public BadgeAwardDTO awardBadge(@PathVariable("userDiscordId") String userDiscordId, @PathVariable("discordRoleId") String discordRoleId) {
 		return badgeAwardService.addBadgeAward(userDiscordId, discordRoleId);
 	}
 	

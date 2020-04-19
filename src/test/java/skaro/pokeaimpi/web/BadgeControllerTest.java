@@ -90,20 +90,20 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void getByDiscordRoleId_shouldGetBadgeWithDiscordRoleId_whenBadgeExists() throws Exception {
-		long discordRoleId = 1000;
+		String discordRoleId = "1000";
 		Mockito.when(badgeService.getByDiscordRoleId(discordRoleId)).thenReturn(Optional.of(createMockBadgeWithDiscordRoleId(discordRoleId)));
 		mockMvc.perform(MockMvcRequestBuilders.get("/badge/discord/"+discordRoleId))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId", Matchers.is((int)discordRoleId)));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId", Matchers.is(discordRoleId)));
 	}
 	
 	@Test
 	public void getByDiscordRoleId_should404_whenBadgeDoesNotExist() throws Exception {
-		long badgePrimaryKey = 2;
-		Mockito.when(badgeService.getByDiscordRoleId(badgePrimaryKey)).thenThrow(new BadgeNotFoundException(badgePrimaryKey));
+		String discordRoleId = "2";
+		Mockito.when(badgeService.getByDiscordRoleId(discordRoleId)).thenThrow(new BadgeNotFoundException(discordRoleId));
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badgePrimaryKey))
+		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+discordRoleId))
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
@@ -122,7 +122,7 @@ public class BadgeControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.greaterThanOrEqualTo(0)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.pointThreshold", Matchers.greaterThanOrEqualTo(0)))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId", Matchers.greaterThanOrEqualTo(0)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId", Matchers.not(Matchers.isEmptyOrNullString())))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.not(Matchers.isEmptyOrNullString())))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.not(Matchers.isEmptyOrNullString())))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.imageUri", Matchers.not(Matchers.isEmptyOrNullString())))
@@ -173,37 +173,7 @@ public class BadgeControllerTest {
 		failPostToBadgeEndpoint(badge);
 	}
 	
-	@Test
-	public void updateBadge_shouldReturn200_whenBadgeIsValidAndBadgeExists() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		
-		Mockito.when(badgeService.updateBadgeByDiscordRoleId(ArgumentMatchers.any(), ArgumentMatchers.any(BadgeDTO.class)))
-		.thenReturn(Optional.of(badge));
-		
-		mockMvc.perform(MockMvcRequestBuilders.put("/badge/discord/"+badge.getDiscordRoleId())
-				.content(TestUtility.convertObjectToJsonBytes(badge))
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-		.andDo(MockMvcResultHandlers.print())
-		.andExpect(MockMvcResultMatchers.status().isOk());
-	}
-	
-	@Test
-	public void updateBadge_shouldReturn404_whenBadgeDoesNotExist() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		
-		Mockito.when(badgeService.updateBadgeByDiscordRoleId(ArgumentMatchers.any(), ArgumentMatchers.any(BadgeDTO.class)))
-		.thenThrow(new BadgeNotFoundException(badge.getDiscordRoleId()));
-		
-		mockMvc.perform(MockMvcRequestBuilders.put("/badge/discord/"+badge.getDiscordRoleId())
-				.content(TestUtility.convertObjectToJsonBytes(badge))
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-		.andDo(MockMvcResultHandlers.print())
-		.andExpect(MockMvcResultMatchers.status().isNotFound());
-	}
-	
-	private BadgeDTO createMockBadgeWithDiscordRoleId(Long discordRoleId) {
+	private BadgeDTO createMockBadgeWithDiscordRoleId(String discordRoleId) {
 		BadgeDTO result = new BadgeDTO();
 		result.setDiscordRoleId(discordRoleId);
 		return result;
@@ -212,7 +182,7 @@ public class BadgeControllerTest {
 	private BadgeDTO createValidBadge() {
 		BadgeDTO result = new BadgeDTO();
 		result.setDescription("this is a test badge");
-		result.setDiscordRoleId(9999L);
+		result.setDiscordRoleId("9999");
 		result.setImageUri("https://www.imgur.com/image.png");
 		result.setTitle("my test badge");
 		result.setId(9);

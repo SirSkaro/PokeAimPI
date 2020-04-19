@@ -108,8 +108,8 @@ public class BadgeAwardControllerTest {
 	@Test
 	public void awardBadge_shouldReturnNewAward_WhenUserAndBadgeExist() throws Exception {
 		BadgeAwardDTO newAward = createEmptyAward();
-		Long userDiscordId = 1L;
-		Long discordRoleId = 2L;
+		String userDiscordId = "1";
+		String discordRoleId = "2";
 		newAward.getBadge().setDiscordRoleId(discordRoleId);
 		newAward.setUser(createUserWithId(0));
 		newAward.getUser().getSocialProfile().getDiscordConnection().setDiscordId(userDiscordId);
@@ -120,14 +120,14 @@ public class BadgeAwardControllerTest {
 		.andDo(MockMvcResultHandlers.print())
 		.andExpect(MockMvcResultMatchers.status().isCreated())
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.user.socialProfile.discordConnection.discordId", Matchers.is(userDiscordId.intValue())))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.badge.discordRoleId", Matchers.is(discordRoleId.intValue())));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.user.socialProfile.discordConnection.discordId", Matchers.is(userDiscordId)))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.badge.discordRoleId", Matchers.is(discordRoleId)));
 	}
 	
 	@Test
 	public void awardBadge_should4XX_WhenUserDoesNotExist() throws Exception {
-		Long discordId = 1L;
-		Mockito.when(awardService.addBadgeAward(ArgumentMatchers.eq(discordId), ArgumentMatchers.anyLong())).thenThrow(new SocialConnectionNotFoundException(discordId));
+		String discordId = "1";
+		Mockito.when(awardService.addBadgeAward(ArgumentMatchers.eq(discordId), ArgumentMatchers.anyString())).thenThrow(new SocialConnectionNotFoundException(discordId));
 		
 		String awardUrl = "/award/discord/user/" + discordId + "/role/0";
 		mockMvc.perform(MockMvcRequestBuilders.post(awardUrl))
@@ -137,8 +137,8 @@ public class BadgeAwardControllerTest {
 	
 	@Test
 	public void awardBadge_should4XX_WhenBadgeDoesNotExist() throws Exception {
-		Long roleId = 1L;
-		Mockito.when(awardService.addBadgeAward(ArgumentMatchers.anyLong(), ArgumentMatchers.eq(roleId))).thenThrow(new BadgeNotFoundException(roleId));
+		String roleId = "1";
+		Mockito.when(awardService.addBadgeAward(ArgumentMatchers.anyString(), ArgumentMatchers.eq(roleId))).thenThrow(new BadgeNotFoundException(roleId));
 		
 		String awardUrl = "/award/discord/user/0/role/"+ roleId;
 		mockMvc.perform(MockMvcRequestBuilders.post(awardUrl))

@@ -23,7 +23,7 @@ public class UserEntity implements PokeAimPIEntity {
 	private Integer points;
 	
 	@Column(name = "discord_id", unique = true)
-	private Long discordId;
+	private String discordId;
 	
 	@Column(name = "twitch_user_name", unique = true)
 	private String twitchUserName;
@@ -44,10 +44,10 @@ public class UserEntity implements PokeAimPIEntity {
 	public void setPoints(Integer points) {
 		this.points = points;
 	}
-	public Long getDiscordId() {
+	public String getDiscordId() {
 		return discordId;
 	}
-	public void setDiscordId(Long discordId) {
+	public void setDiscordId(String discordId) {
 		this.discordId = discordId;
 	}
 	public String getTwitchUserName() {

@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<UserDTO> getByDiscordId(Long id) {
+	public Optional<UserDTO> getByDiscordId(String id) {
 		return userRepository.getByDiscordId(id)
 				.map(user -> modelMapper.map(user, UserDTO.class));
 	}

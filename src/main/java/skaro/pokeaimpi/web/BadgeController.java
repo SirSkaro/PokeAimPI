@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -38,21 +37,15 @@ public class BadgeController {
 	}
 	
 	@GetMapping("/discord/{id}")
-	public BadgeDTO getByDiscordRoleId(@PathVariable(value="id") Long discordRoleId) {
+	public BadgeDTO getByDiscordRoleId(@PathVariable(value="id") String discordRoleId) {
 		return badgeService.getByDiscordRoleId(discordRoleId)
 				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public BadgeDTO createBadge(@RequestBody @Valid BadgeDTO badge) {
+	public BadgeDTO saveBadge(@RequestBody @Valid BadgeDTO badge) {
 		return badgeService.saveBadge(badge);
-	}
-	
-	@PutMapping("/discord/{id}")
-	public void updateBadge(@PathVariable(value="id") Long discordRoleId, @RequestBody @Valid BadgeDTO badge) {
-		badgeService.updateBadgeByDiscordRoleId(discordRoleId, badge)
-			.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 	}
 	
 }

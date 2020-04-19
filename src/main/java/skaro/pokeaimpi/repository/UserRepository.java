@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import skaro.pokeaimpi.repository.entities.UserEntity;
 
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
-	Optional<UserEntity> getByDiscordId(Long discordId);
+	Optional<UserEntity> getByDiscordId(String discordId);
 	Optional<UserEntity> getByTwitchUserName(String twitchUserName);
 }

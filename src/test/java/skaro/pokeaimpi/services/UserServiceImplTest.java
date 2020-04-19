@@ -64,7 +64,7 @@ public class UserServiceImplTest {
 	@Test
 	public void getByDiscordId_shouldGetUserWithDiscordId_whenUserExists() {
 		UserDTO userDTO = TestUtility.createEmptyUserDTO();
-		Long discordId = 1L;
+		String discordId = "1";
 		userDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
 		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(new UserEntity()));

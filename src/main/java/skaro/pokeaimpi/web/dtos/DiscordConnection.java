@@ -7,17 +7,17 @@ import lombok.Data;
 @Data
 @Embeddable
 public class DiscordConnection {
-	private Long discordId;
+	private String discordId;
 	
 	public DiscordConnection() {
 		
 	}
 		
-	public Long getDiscordId() {
+	public String getDiscordId() {
 		return discordId;
 	}
 	
-	public void setDiscordId(Long discordId) {
+	public void setDiscordId(String discordId) {
 		this.discordId = discordId;
 	}
 	
