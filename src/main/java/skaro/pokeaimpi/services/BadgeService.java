@@ -6,12 +6,9 @@ import java.util.Optional;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
 
 public interface BadgeService {
-	
-	public List<BadgeDTO> getAll();
-	public Optional<BadgeDTO> getById(Integer id);
-	public Optional<BadgeDTO> getByDiscordRoleId(String discordRoleId);
-	public List<BadgeDTO> getBadgesBetween(int floor, int ceiling);
-	public BadgeDTO saveBadge(BadgeDTO badge);
-	public Optional<BadgeDTO> updateBadgeByDiscordRoleId(String discordRoleId, BadgeDTO badge);
-	
+	List<BadgeDTO> getAll();
+	Optional<BadgeDTO> getById(Integer id);
+	Optional<BadgeDTO> getByDiscordRoleId(String discordRoleId);
+	List<BadgeDTO> getBadgesBetween(int floor, int ceiling);
+	BadgeDTO saveBadge(BadgeDTO badge);
 }

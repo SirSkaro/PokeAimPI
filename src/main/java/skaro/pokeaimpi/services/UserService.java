@@ -6,10 +6,8 @@ import java.util.Optional;
 import skaro.pokeaimpi.web.dtos.UserDTO;
 
 public interface UserService {
-
-	public List<UserDTO> getAll();
-	public UserDTO createOrUpdate(UserDTO user);
-	public Optional<UserDTO> getByDiscordId(String id);
-	public Optional<UserDTO> getByTwitchName(String name);
-	
+	List<UserDTO> getAll();
+	UserDTO createOrUpdate(UserDTO user);
+	Optional<UserDTO> getByDiscordId(String id);
+	Optional<UserDTO> getByTwitchName(String name);
 }

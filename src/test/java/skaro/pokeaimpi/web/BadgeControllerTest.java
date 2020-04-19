@@ -173,36 +173,6 @@ public class BadgeControllerTest {
 		failPostToBadgeEndpoint(badge);
 	}
 	
-	@Test
-	public void updateBadge_shouldReturn200_whenBadgeIsValidAndBadgeExists() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		
-		Mockito.when(badgeService.updateBadgeByDiscordRoleId(ArgumentMatchers.any(), ArgumentMatchers.any(BadgeDTO.class)))
-		.thenReturn(Optional.of(badge));
-		
-		mockMvc.perform(MockMvcRequestBuilders.put("/badge/discord/"+badge.getDiscordRoleId())
-				.content(TestUtility.convertObjectToJsonBytes(badge))
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-		.andDo(MockMvcResultHandlers.print())
-		.andExpect(MockMvcResultMatchers.status().isOk());
-	}
-	
-	@Test
-	public void updateBadge_shouldReturn404_whenBadgeDoesNotExist() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		
-		Mockito.when(badgeService.updateBadgeByDiscordRoleId(ArgumentMatchers.any(), ArgumentMatchers.any(BadgeDTO.class)))
-		.thenThrow(new BadgeNotFoundException(badge.getDiscordRoleId()));
-		
-		mockMvc.perform(MockMvcRequestBuilders.put("/badge/discord/"+badge.getDiscordRoleId())
-				.content(TestUtility.convertObjectToJsonBytes(badge))
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-		.andDo(MockMvcResultHandlers.print())
-		.andExpect(MockMvcResultMatchers.status().isNotFound());
-	}
-	
 	private BadgeDTO createMockBadgeWithDiscordRoleId(String discordRoleId) {
 		BadgeDTO result = new BadgeDTO();
 		result.setDiscordRoleId(discordRoleId);
