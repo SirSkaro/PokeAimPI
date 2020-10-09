@@ -11,4 +11,5 @@ public interface BadgeService {
 	Optional<BadgeDTO> getByDiscordRoleId(String discordRoleId);
 	List<BadgeDTO> getBadgesBetween(int floor, int ceiling);
 	BadgeDTO saveBadge(BadgeDTO badge);
+	void deleteBadge(Integer id);
 }

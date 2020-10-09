@@ -1,5 +1,7 @@
 package skaro.pokeaimpi.web.dtos;
 
+import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -9,7 +11,8 @@ import lombok.Data;
 
 @Data
 @Embeddable
-public class BadgeDTO {
+public class BadgeDTO implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
 	@Min(value = 0, message = "point threshold must be positive")

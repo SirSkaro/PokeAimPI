@@ -8,10 +8,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import skaro.pokeaimpi.messaging.BadgeEventType;
 import skaro.pokeaimpi.repository.BadgeRepository;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
+import skaro.pokeaimpi.services.BadgeMessageService;
 import skaro.pokeaimpi.services.BadgeService;
 import skaro.pokeaimpi.web.dtos.BadgeDTO;
+import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
 
 @Service
 public class BadgeServiceImpl implements BadgeService {
@@ -20,6 +23,8 @@ public class BadgeServiceImpl implements BadgeService {
 	private BadgeRepository badgeRepository;
 	@Autowired
 	private ModelMapper modelMapper;
+	@Autowired(required=false)
+	private BadgeMessageService messageService;
 	
 	@Override
 	public List<BadgeDTO> getAll() {
@@ -55,6 +60,24 @@ public class BadgeServiceImpl implements BadgeService {
 		badgeEntity = badgeRepository.save(badgeEntity);
 		
 		return modelMapper.map(badgeEntity, BadgeDTO.class);
+	}
+
+	@Override
+	public void deleteBadge(Integer id) {
+		badgeRepository.findById(id)
+			.map(badge -> modelMapper.map(badge, BadgeDTO.class))
+			.map(badge -> {
+				badgeRepository.deleteById(badge.getId());
+				sendEventMessage(badge, BadgeEventType.DELETE);
+				return badge;
+			})
+			.orElseThrow(() -> new BadgeNotFoundException(id));
+	}
+	
+	private void sendEventMessage(BadgeDTO badge, BadgeEventType type) {
+		if(messageService != null) {
+			messageService.sendBadgeMessage(badge, type);
+		}
 	}
 
 }
