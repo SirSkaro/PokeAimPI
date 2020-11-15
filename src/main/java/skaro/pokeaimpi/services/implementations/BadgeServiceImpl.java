@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import skaro.pokeaimpi.messaging.BadgeEventType;
 import skaro.pokeaimpi.repository.BadgeRepository;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
+import skaro.pokeaimpi.sdk.resource.Badge;
 import skaro.pokeaimpi.services.BadgeMessageService;
 import skaro.pokeaimpi.services.BadgeService;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
 
 @Service
@@ -27,45 +27,45 @@ public class BadgeServiceImpl implements BadgeService {
 	private BadgeMessageService messageService;
 	
 	@Override
-	public List<BadgeDTO> getAll() {
+	public List<Badge> getAll() {
 		return badgeRepository.findAll()
 				.stream()
-				.map(badge -> modelMapper.map(badge, BadgeDTO.class))
+				.map(badge -> modelMapper.map(badge, Badge.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<BadgeDTO> getById(Integer id) {
+	public Optional<Badge> getById(Integer id) {
 		return badgeRepository.findById(id)
-				.map(badge -> modelMapper.map(badge, BadgeDTO.class));
+				.map(badge -> modelMapper.map(badge, Badge.class));
 	}
 
 	@Override
-	public List<BadgeDTO> getBadgesBetween(int floor, int ceiling) {
+	public List<Badge> getBadgesBetween(int floor, int ceiling) {
 		return badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(floor, ceiling)
 				.stream()
-				.map(badge -> modelMapper.map(badge, BadgeDTO.class))
+				.map(badge -> modelMapper.map(badge, Badge.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<BadgeDTO> getByDiscordRoleId(String discordRoleId) {
+	public Optional<Badge> getByDiscordRoleId(String discordRoleId) {
 		return badgeRepository.getByDiscordRoleId(discordRoleId)
-				.map(badge -> modelMapper.map(badge, BadgeDTO.class));
+				.map(badge -> modelMapper.map(badge, Badge.class));
 	}
 
 	@Override
-	public BadgeDTO saveBadge(BadgeDTO badge) {
+	public Badge saveBadge(Badge badge) {
 		BadgeEntity badgeEntity = modelMapper.map(badge, BadgeEntity.class);
 		badgeEntity = badgeRepository.save(badgeEntity);
 		
-		return modelMapper.map(badgeEntity, BadgeDTO.class);
+		return modelMapper.map(badgeEntity, Badge.class);
 	}
 
 	@Override
 	public void deleteBadge(Integer id) {
 		badgeRepository.findById(id)
-			.map(badge -> modelMapper.map(badge, BadgeDTO.class))
+			.map(badge -> modelMapper.map(badge, Badge.class))
 			.map(badge -> {
 				badgeRepository.deleteById(badge.getId());
 				sendEventMessage(badge, BadgeEventType.DELETE);
@@ -74,7 +74,7 @@ public class BadgeServiceImpl implements BadgeService {
 			.orElseThrow(() -> new BadgeNotFoundException(id));
 	}
 	
-	private void sendEventMessage(BadgeDTO badge, BadgeEventType type) {
+	private void sendEventMessage(Badge badge, BadgeEventType type) {
 		if(messageService != null) {
 			messageService.sendBadgeMessage(badge, type);
 		}

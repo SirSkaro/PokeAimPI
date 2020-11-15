@@ -1,7 +1,7 @@
 package skaro.pokeaimpi.services;
 
-import skaro.pokeaimpi.web.dtos.UserProgressDTO;
+import skaro.pokeaimpi.sdk.resource.UserProgress;
 
 public interface ProgressService {
-	UserProgressDTO getByDiscordId(String discordId);
+	UserProgress getByDiscordId(String discordId);
 }

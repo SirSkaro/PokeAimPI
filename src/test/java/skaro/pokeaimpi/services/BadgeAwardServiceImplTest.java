@@ -24,8 +24,8 @@ import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
+import skaro.pokeaimpi.sdk.resource.BadgeAwardRecord;
 import skaro.pokeaimpi.services.implementations.BadgeAwardServiceImpl;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotAwardableException;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
 import skaro.pokeaimpi.web.exceptions.BadgeRewardedException;
@@ -64,9 +64,9 @@ public class BadgeAwardServiceImplTest {
 		Mockito.when(userRepository.getByDiscordId(userDiscordId)).thenReturn(Optional.of(new UserEntity()));
 		Mockito.when(badgeRepository.getByDiscordRoleId(discordRoleId)).thenReturn(Optional.of(badge));
 		Mockito.when(awardRepository.save(ArgumentMatchers.any(BadgeAwardEntity.class))).thenReturn(new BadgeAwardEntity());
-		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeAwardEntity.class), ArgumentMatchers.same(BadgeAwardDTO.class))).thenReturn(new BadgeAwardDTO());
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeAwardEntity.class), ArgumentMatchers.same(BadgeAwardRecord.class))).thenReturn(new BadgeAwardRecord());
 		
-		BadgeAwardDTO award = awardService.addBadgeAward(userDiscordId, discordRoleId);
+		BadgeAwardRecord award = awardService.addBadgeAward(userDiscordId, discordRoleId);
 		assertNotNull(award);
 		Mockito.verify(awardRepository, VerificationModeFactory.times(1)).save(ArgumentMatchers.any(BadgeAwardEntity.class));
 	}

@@ -12,10 +12,10 @@ import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
+import skaro.pokeaimpi.sdk.resource.Badge;
+import skaro.pokeaimpi.sdk.resource.User;
+import skaro.pokeaimpi.sdk.resource.UserProgress;
 import skaro.pokeaimpi.services.ProgressService;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
-import skaro.pokeaimpi.web.dtos.UserDTO;
-import skaro.pokeaimpi.web.dtos.UserProgressDTO;
 
 @Service
 public class ProgressServiceImpl implements ProgressService {
@@ -30,14 +30,14 @@ public class ProgressServiceImpl implements ProgressService {
 	private ModelMapper modelMapper;
 	
 	@Override
-	public UserProgressDTO getByDiscordId(String discordId) {
-		UserProgressDTO result = new UserProgressDTO();
-		UserDTO user = getOrCreateUser(discordId);
+	public UserProgress getByDiscordId(String discordId) {
+		UserProgress result = new UserProgress();
+		User user = getOrCreateUser(discordId);
 		result.setUser(user);
 		result.setCurrentHighestBadge(getCurrentHighestBadge(discordId));
 		result.setCurrentPoints(user.getPoints());
 		
-		BadgeDTO nextBadge = getNextBadge(user);
+		Badge nextBadge = getNextBadge(user);
 		result.setNextBadge(nextBadge);
 		
 		if(nextBadge != null)
@@ -48,10 +48,10 @@ public class ProgressServiceImpl implements ProgressService {
 		return result;
 	}
 	
-	private UserDTO getOrCreateUser(String discordId) {
+	private User getOrCreateUser(String discordId) {
 		UserEntity user = userRepository.getByDiscordId(discordId)
 				.orElseGet(() -> createNewUser(discordId));
-		return modelMapper.map(user, UserDTO.class);
+		return modelMapper.map(user, User.class);
 	}
 	
 	private UserEntity createNewUser(String discordId) {
@@ -62,19 +62,19 @@ public class ProgressServiceImpl implements ProgressService {
 		return userRepository.saveAndFlush(newUser);
 	}
 
-	private BadgeDTO getCurrentHighestBadge(String discordId) {
+	private Badge getCurrentHighestBadge(String discordId) {
 		List<BadgeAwardEntity> awards = awardRepository.findByUserDiscordIdSortThresholdDesc(discordId);
 		
 		if(awards.isEmpty()) {
 			return null;
 		}
 		
-		return modelMapper.map(awards.get(0).getBadge(), BadgeDTO.class);
+		return modelMapper.map(awards.get(0).getBadge(), Badge.class);
 	}
 	
-	private BadgeDTO getNextBadge(UserDTO user) {
+	private Badge getNextBadge(User user) {
 		return badgeRepository.getFirstByCanBeEarnedWithPointsTrueAndPointThresholdGreaterThanOrderByPointThreshold(user.getPoints())
-				.map(badge -> modelMapper.map(badge, BadgeDTO.class))
+				.map(badge -> modelMapper.map(badge, Badge.class))
 				.orElse(null);
 	}
 	

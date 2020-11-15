@@ -26,10 +26,10 @@ import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.UserEntity;
+import skaro.pokeaimpi.sdk.resource.Badge;
+import skaro.pokeaimpi.sdk.resource.User;
+import skaro.pokeaimpi.sdk.resource.UserProgress;
 import skaro.pokeaimpi.services.implementations.ProgressServiceImpl;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
-import skaro.pokeaimpi.web.dtos.UserDTO;
-import skaro.pokeaimpi.web.dtos.UserProgressDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ProgressServiceImplTest {
@@ -59,7 +59,7 @@ public class ProgressServiceImplTest {
 	private int nextBadgeThreshold;
 	private String discordId;
 	private String discordRoleId;
-	private UserDTO userDTO;
+	private User userDTO;
 	
 	@Before
 	public void setup() {
@@ -71,14 +71,14 @@ public class ProgressServiceImplTest {
 		userDTO.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		
 		
-		BadgeDTO nextBadgeDTO = new BadgeDTO();
-		nextBadgeDTO.setDiscordRoleId(discordRoleId);
-		nextBadgeDTO.setPointThreshold(nextBadgeThreshold);
+		Badge nextBadge = new Badge();
+		nextBadge.setDiscordRoleId(discordRoleId);
+		nextBadge.setPointThreshold(nextBadgeThreshold);
 		BadgeEntity badgeEntity = new BadgeEntity();
 		
 		Mockito.when(badgeRepository.getFirstByCanBeEarnedWithPointsTrueAndPointThresholdGreaterThanOrderByPointThreshold(ArgumentMatchers.anyInt())).thenReturn(Optional.of(badgeEntity));
-		Mockito.when(modelMapper.map(ArgumentMatchers.same(badgeEntity), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(nextBadgeDTO);
-		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(UserDTO.class))).thenReturn(userDTO);
+		Mockito.when(modelMapper.map(ArgumentMatchers.same(badgeEntity), ArgumentMatchers.same(Badge.class))).thenReturn(nextBadge);
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(UserEntity.class), ArgumentMatchers.same(User.class))).thenReturn(userDTO);
 	}
 	
 	@Test
@@ -88,16 +88,16 @@ public class ProgressServiceImplTest {
 		awardEntity.setBadge(awardedBadge);
 		List<BadgeAwardEntity> awards = new ArrayList<>();
 		awards.add(awardEntity);
-		BadgeDTO currentBadgeDTO = new BadgeDTO();
-		currentBadgeDTO.setPointThreshold(threshold);
-		currentBadgeDTO.setDiscordRoleId(discordRoleId);
+		Badge currentBadge = new Badge();
+		currentBadge.setPointThreshold(threshold);
+		currentBadge.setDiscordRoleId(discordRoleId);
 		userDTO.setPoints(threshold);
 		
 		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(new UserEntity()));
 		Mockito.when(awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)).thenReturn(awards);
-		Mockito.when(modelMapper.map(ArgumentMatchers.same(awardedBadge), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(currentBadgeDTO);
+		Mockito.when(modelMapper.map(ArgumentMatchers.same(awardedBadge), ArgumentMatchers.same(Badge.class))).thenReturn(currentBadge);
 		
-		UserProgressDTO progress = progressService.getByDiscordId(discordId);
+		UserProgress progress = progressService.getByDiscordId(discordId);
 		
 		assertEquals(threshold, progress.getCurrentPoints().intValue());
 		assertEquals(nextBadgeThreshold - userDTO.getPoints(), progress.getPointsToNextReward().intValue());
@@ -116,7 +116,7 @@ public class ProgressServiceImplTest {
 		
 		userDTO.setPoints(0);
 		
-		UserProgressDTO progress = progressService.getByDiscordId(discordId);
+		UserProgress progress = progressService.getByDiscordId(discordId);
 		
 		assertEquals(0, progress.getCurrentPoints().intValue());
 		assertEquals(nextBadgeThreshold, progress.getPointsToNextReward().intValue());
@@ -128,11 +128,11 @@ public class ProgressServiceImplTest {
 	
 	@Test
 	public void getByDiscordId_shouldGetProgressWithNoNextBadge_whenNoHigherBadgesAreAvailable() {
-		Mockito.when(modelMapper.map(ArgumentMatchers.any(), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(null);
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(), ArgumentMatchers.same(Badge.class))).thenReturn(null);
 		Mockito.when(userRepository.getByDiscordId(discordId)).thenReturn(Optional.of(new UserEntity()));
 		Mockito.when(awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)).thenReturn(new ArrayList<BadgeAwardEntity>());
 		
-		UserProgressDTO progress = progressService.getByDiscordId(discordId);
+		UserProgress progress = progressService.getByDiscordId(discordId);
 		
 		assertEquals(-1, progress.getPointsToNextReward().intValue());
 		assertNull(progress.getNextBadge());

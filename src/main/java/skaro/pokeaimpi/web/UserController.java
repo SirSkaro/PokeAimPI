@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import skaro.pokeaimpi.sdk.request.PointAmount;
+import skaro.pokeaimpi.sdk.resource.NewAwardList;
+import skaro.pokeaimpi.sdk.resource.User;
+import skaro.pokeaimpi.sdk.resource.UserProgress;
 import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.services.ProgressService;
 import skaro.pokeaimpi.services.UserService;
-import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
-import skaro.pokeaimpi.web.dtos.PointsDTO;
-import skaro.pokeaimpi.web.dtos.UserDTO;
-import skaro.pokeaimpi.web.dtos.UserProgressDTO;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
 @RestController   
@@ -37,29 +37,29 @@ public class UserController {
 	}
 	
 	@GetMapping
-	public List<UserDTO> getAll() {
+	public List<User> getAll() {
 		return userService.getAll();
 	}
 	
 	@GetMapping("/discord/{id}")
-	public UserDTO getByDiscordId(@PathVariable(value="id") String id) {
+	public User getByDiscordId(@PathVariable(value="id") String id) {
 		return userService.getByDiscordId(id)
 				.orElseThrow(() -> new SocialConnectionNotFoundException(id));
 	}
 	
 	@GetMapping("/discord/{id}/progress")
-	public UserProgressDTO getProgressByDiscordId(@PathVariable(value="id") String id) {
+	public UserProgress getProgressByDiscordId(@PathVariable(value="id") String id) {
 		return progressService.getByDiscordId(id);
 	}
 	
 	@GetMapping("/twitch/{name}")
-	public UserDTO getByTwitchName(@PathVariable(value="name") String name) {
+	public User getByTwitchName(@PathVariable(value="name") String name) {
 		return userService.getByTwitchName(name)
 				.orElseThrow(() -> new SocialConnectionNotFoundException(name));
 	}
 	
 	@PostMapping("/discord/{id}/points/add")
-	public NewAwardsDTO addPointsByDiscordId(@PathVariable(value="id") String id, @Valid @RequestBody PointsDTO pointRequest) {
+	public NewAwardList addPointsByDiscordId(@PathVariable(value="id") String id, @Valid @RequestBody PointAmount pointRequest) {
 		return pointService.addPointsViaDiscordId(id, pointRequest.getAmount());
 	}
 	

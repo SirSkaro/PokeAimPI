@@ -1,8 +1,8 @@
 package skaro.pokeaimpi.services;
 
 import skaro.pokeaimpi.messaging.BadgeEventType;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
+import skaro.pokeaimpi.sdk.resource.Badge;
 
 public interface BadgeMessageService {
-	void sendBadgeMessage(BadgeDTO badge, BadgeEventType type);
+	void sendBadgeMessage(Badge badge, BadgeEventType type);
 }

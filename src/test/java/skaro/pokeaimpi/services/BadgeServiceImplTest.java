@@ -22,8 +22,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import skaro.pokeaimpi.repository.BadgeRepository;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
+import skaro.pokeaimpi.sdk.resource.Badge;
 import skaro.pokeaimpi.services.implementations.BadgeServiceImpl;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BadgeServiceImplTest {
@@ -47,39 +47,39 @@ public class BadgeServiceImplTest {
 	
 	@Test
 	public void getAll_shouldGetAllBadges() throws Exception {
-		BadgeDTO badgeDTO = new BadgeDTO();
+		Badge badge = new Badge();
 		List<BadgeEntity> allBadges= Arrays.asList(new BadgeEntity(), new BadgeEntity(), new BadgeEntity());
-	    Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(badgeDTO);
+	    Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(Badge.class))).thenReturn(badge);
 		Mockito.when(badgeRepository.findAll()).thenReturn(allBadges);
 		
-		List<BadgeDTO> resultBadges = badgeService.getAll();
+		List<Badge> resultBadges = badgeService.getAll();
 		
 		assertEquals(allBadges.size(), resultBadges.size());
-		for(BadgeDTO dto : resultBadges) {
+		for(Badge dto : resultBadges) {
 			assertNotNull(dto);
 		}
 	}
 	
 	@Test
 	public void getByDiscordRoleId_shouldGetBadgeWithDiscordRoleId_whenBadgeExists() {
-		BadgeDTO badgeDTO = new BadgeDTO();
+		Badge badge = new Badge();
 		String roleId = "1";
-		badgeDTO.setDiscordRoleId(roleId);
-		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(badgeDTO);
+		badge.setDiscordRoleId(roleId);
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(Badge.class))).thenReturn(badge);
 		Mockito.when(badgeRepository.getByDiscordRoleId(roleId)).thenReturn(Optional.of(new BadgeEntity()));
 		
-		Optional<BadgeDTO> badgeWithDiscordRoleId = badgeService.getByDiscordRoleId(roleId);
+		Optional<Badge> badgeWithDiscordRoleId = badgeService.getByDiscordRoleId(roleId);
 		assertTrue(badgeWithDiscordRoleId.isPresent());
 		assertEquals(roleId, badgeWithDiscordRoleId.get().getDiscordRoleId());
 	}
 	
 	@Test
 	public void saveBadge_shouldPersistBadge() {
-		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(BadgeDTO.class))).thenReturn(new BadgeDTO());
-		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeDTO.class), ArgumentMatchers.same(BadgeEntity.class))).thenReturn(new BadgeEntity());
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeEntity.class), ArgumentMatchers.same(Badge.class))).thenReturn(new Badge());
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(Badge.class), ArgumentMatchers.same(BadgeEntity.class))).thenReturn(new BadgeEntity());
 		Mockito.when(badgeRepository.save(ArgumentMatchers.any(BadgeEntity.class))).thenReturn(new BadgeEntity());
 		
-		badgeService.saveBadge(new BadgeDTO());
+		badgeService.saveBadge(new Badge());
 		Mockito.verify(badgeRepository, VerificationModeFactory.times(1)).save(ArgumentMatchers.any(BadgeEntity.class));
 	}
 	

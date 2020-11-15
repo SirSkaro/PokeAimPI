@@ -6,7 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class EntityBuilder<T extends PokeAimPIEntity> {
+public class EntityBuilder<T> {
 	private Supplier<T> instantiator;
 
     private List<Consumer<T>> instanceModifiers = new ArrayList<>();
@@ -15,7 +15,7 @@ public class EntityBuilder<T extends PokeAimPIEntity> {
         this.instantiator = instantiator;
     }
 
-    public static <T extends PokeAimPIEntity> EntityBuilder<T> of(Supplier<T> instantiator) {
+    public static <T> EntityBuilder<T> of(Supplier<T> instantiator) {
         return new EntityBuilder<T>(instantiator);
     }
 

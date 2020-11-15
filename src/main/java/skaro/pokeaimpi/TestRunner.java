@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import skaro.pokeaimpi.messaging.BadgeEventMessage;
 import skaro.pokeaimpi.messaging.BadgeEventType;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
+import skaro.pokeaimpi.sdk.resource.Badge;
 
 @Component
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
@@ -24,7 +24,7 @@ public class TestRunner implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		BadgeEventMessage event = new BadgeEventMessage();
-		event.setBadge(new BadgeDTO());
+		event.setBadge(new Badge());
 		event.setEventType(BadgeEventType.DELETE);
 		template.convertAndSend(exchange.getName(), "", event);
 	}
