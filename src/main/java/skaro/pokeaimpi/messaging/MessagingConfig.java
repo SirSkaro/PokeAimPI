@@ -17,8 +17,9 @@ import skaro.pokeaimpi.services.BadgeMessageService;
 import skaro.pokeaimpi.services.implementations.BadgeMessageServiceImpl;
 
 @Configuration
-@Profile("pub-sub")
+@Profile(MessagingConfig.MESSAGING_PROFILE)
 public class MessagingConfig {
+	public static final String MESSAGING_PROFILE = "pub-sub";
 	private static final String BADGE_QUEUE_BEAN = "badgeQueue";
 	private static final String BADGE_BINDING_BEAN = "badgeBinding";
 	

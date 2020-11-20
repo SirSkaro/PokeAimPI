@@ -8,8 +8,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import skaro.pokeaimpi.messaging.BadgeEventMessage;
-import skaro.pokeaimpi.messaging.BadgeEventType;
+import skaro.pokeaimpi.sdk.messaging.BadgeEventMessage;
+import skaro.pokeaimpi.sdk.messaging.BadgeEventType;
 import skaro.pokeaimpi.sdk.resource.Badge;
 
 @Component
