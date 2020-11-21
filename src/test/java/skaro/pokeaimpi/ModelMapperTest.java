@@ -1,13 +1,13 @@
 package skaro.pokeaimpi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
@@ -16,7 +16,7 @@ import skaro.pokeaimpi.sdk.resource.SocialProfile;
 import skaro.pokeaimpi.sdk.resource.TwitchConnection;
 import skaro.pokeaimpi.sdk.resource.User;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes= { PokeAimPIConfig.class} )
 public class ModelMapperTest {
 	

@@ -1,14 +1,14 @@
 package skaro.pokeaimpi.services;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.repository.BadgeAwardRepository;
@@ -31,7 +31,7 @@ import skaro.pokeaimpi.sdk.resource.NewAwardList;
 import skaro.pokeaimpi.sdk.resource.User;
 import skaro.pokeaimpi.services.implementations.PointServiceImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 public class PointServiceImplTest {
 
 	@TestConfiguration
@@ -55,7 +55,7 @@ public class PointServiceImplTest {
 	@MockBean
 	private BadgeAwardRepository awardRepository;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		List<BadgeEntity> badges = Arrays.asList(new BadgeEntity(), new BadgeEntity());
 		Mockito.when(badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt())).thenReturn(badges);

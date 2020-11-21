@@ -1,15 +1,15 @@
 package skaro.pokeaimpi.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.repository.BadgeAwardRepository;
@@ -31,7 +31,7 @@ import skaro.pokeaimpi.sdk.resource.User;
 import skaro.pokeaimpi.sdk.resource.UserProgress;
 import skaro.pokeaimpi.services.implementations.ProgressServiceImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 public class ProgressServiceImplTest {
 
 	@TestConfiguration
@@ -61,7 +61,7 @@ public class ProgressServiceImplTest {
 	private String discordRoleId;
 	private User userDTO;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		threshold = 10;
 		nextBadgeThreshold = 2 * threshold;
