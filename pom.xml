@@ -9,11 +9,19 @@
 	<packaging>jar</packaging>
 
 	<parent>
-		<groupId>skaro.pokeaimpi</groupId>
-		<artifactId>pokeaimpi-sdk</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.3.5.RELEASE</version>
 		<relativePath />
 	</parent>
+
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub SirSkaro Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/SirSkaro/PokeAimPI-SDK</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -40,7 +48,11 @@
 		<dependency>
 			<groupId>skaro.pokeaimpi</groupId>
 			<artifactId>pokeaimpi-sdk</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 		
 		<!-- Test dependencies -->

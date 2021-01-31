@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import skaro.pokeaimpi.repository.BadgeRepository;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
+import skaro.pokeaimpi.repository.eventhandler.BadgeEventHandler;
 import skaro.pokeaimpi.sdk.resource.Badge;
 import skaro.pokeaimpi.services.BadgeService;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
@@ -21,6 +22,8 @@ public class BadgeServiceImpl implements BadgeService {
 	private BadgeRepository badgeRepository;
 	@Autowired
 	private ModelMapper modelMapper;
+	@Autowired(required = false)
+	private BadgeEventHandler eventHandler;
 	
 	@Override
 	public List<Badge> getAll() {
@@ -60,11 +63,20 @@ public class BadgeServiceImpl implements BadgeService {
 
 	@Override
 	public void deleteBadge(Integer id) {
-		if(!badgeRepository.existsById(id)) {
-			throw new BadgeNotFoundException(id);
+		badgeRepository.findById(id)
+			.map(badge -> modelMapper.map(badge, Badge.class))
+			.map(badge -> {
+				badgeRepository.deleteById(badge.getId());
+				signalDeleteEvent(badge);
+				return badge;
+			})
+			.orElseThrow(() -> new BadgeNotFoundException(id));
+	}
+	
+	private void signalDeleteEvent(Badge badge) {
+		if(eventHandler != null) {
+			eventHandler.sendBadgeDeleteEvent(badge);
 		}
-		
-		badgeRepository.deleteById(id);
 	}
 	
 

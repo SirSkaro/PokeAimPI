@@ -27,7 +27,7 @@ public class BadgeMessageServiceImpl implements BadgeMessageService {
 		message.setBadge(badge);
 		message.setEventType(type);
 		
-		template.convertAndSend(exchange.getName(), message);
+		template.convertAndSend(exchange.getName(), "", message);
 	}
 
 }
