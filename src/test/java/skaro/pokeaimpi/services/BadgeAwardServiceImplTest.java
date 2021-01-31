@@ -1,11 +1,12 @@
 package skaro.pokeaimpi.services;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
@@ -14,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import skaro.pokeaimpi.TestUtility;
 import skaro.pokeaimpi.repository.BadgeAwardRepository;
@@ -24,14 +25,14 @@ import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
+import skaro.pokeaimpi.sdk.resource.BadgeAwardRecord;
 import skaro.pokeaimpi.services.implementations.BadgeAwardServiceImpl;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotAwardableException;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
 import skaro.pokeaimpi.web.exceptions.BadgeRewardedException;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 public class BadgeAwardServiceImplTest {
 
 	@TestConfiguration
@@ -64,43 +65,43 @@ public class BadgeAwardServiceImplTest {
 		Mockito.when(userRepository.getByDiscordId(userDiscordId)).thenReturn(Optional.of(new UserEntity()));
 		Mockito.when(badgeRepository.getByDiscordRoleId(discordRoleId)).thenReturn(Optional.of(badge));
 		Mockito.when(awardRepository.save(ArgumentMatchers.any(BadgeAwardEntity.class))).thenReturn(new BadgeAwardEntity());
-		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeAwardEntity.class), ArgumentMatchers.same(BadgeAwardDTO.class))).thenReturn(new BadgeAwardDTO());
+		Mockito.when(modelMapper.map(ArgumentMatchers.any(BadgeAwardEntity.class), ArgumentMatchers.same(BadgeAwardRecord.class))).thenReturn(new BadgeAwardRecord());
 		
-		BadgeAwardDTO award = awardService.addBadgeAward(userDiscordId, discordRoleId);
+		BadgeAwardRecord award = awardService.addBadgeAward(userDiscordId, discordRoleId);
 		assertNotNull(award);
 		Mockito.verify(awardRepository, VerificationModeFactory.times(1)).save(ArgumentMatchers.any(BadgeAwardEntity.class));
 	}
 	
-	@Test(expected = SocialConnectionNotFoundException.class)
+	@Test
 	public void addBadgeAward_shouldThrowException_WhenUserDoesNotExist() {
 		String userDiscordId = "1";
 		BadgeEntity badge = TestUtility.createEmptyValidBadgeEntity();
 		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.any())).thenReturn(Optional.of(badge));
 		Mockito.when(userRepository.getByDiscordId(userDiscordId)).thenReturn(Optional.empty());
 		
-		awardService.addBadgeAward(userDiscordId, "0");
+		Assertions.assertThrows(SocialConnectionNotFoundException.class, () -> awardService.addBadgeAward(userDiscordId, "0"));
 	}
 	
-	@Test(expected = BadgeNotFoundException.class)
+	@Test
 	public void addBadgeAward_shouldThrowException_WhenBadgeDoesNotExist() {
 		String discordRoleId = "1";
 		Mockito.when(userRepository.getByDiscordId(ArgumentMatchers.anyString())).thenReturn(Optional.of(new UserEntity()));
 		Mockito.when(badgeRepository.getByDiscordRoleId(discordRoleId)).thenReturn(Optional.empty());
 		
-		awardService.addBadgeAward("0", discordRoleId);
+		Assertions.assertThrows(BadgeNotFoundException.class, () -> awardService.addBadgeAward("0", discordRoleId));
 	}
 	
-	@Test(expected = BadgeNotAwardableException.class)
+	@Test
 	public void addBadgeAward_shouldThrowException_WhenBadgeIsEarnableViaPoints() {
 		BadgeEntity earnableBadge = EntityBuilder.of(BadgeEntity::new)
 				.with(BadgeEntity::setCanBeEarnedWithPoints, true)
 				.build();
 		Mockito.when(badgeRepository.getByDiscordRoleId(ArgumentMatchers.any())).thenReturn(Optional.of(earnableBadge));
 		
-		awardService.addBadgeAward("0", "0");
+		Assertions.assertThrows(BadgeNotAwardableException.class, () -> awardService.addBadgeAward("0", "0"));
 	}
 	
-	@Test(expected = BadgeRewardedException.class)
+	@Test
 	public void addBadgeAward_shouldThrowException_WhenUserAlreadyHasBadge() {
 		String userDiscordId = "1";
 		String discordRoleId = "2";
@@ -110,7 +111,7 @@ public class BadgeAwardServiceImplTest {
 		Mockito.when(awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId))
 			.thenReturn(Optional.of(new BadgeAwardEntity()));
 		
-		awardService.addBadgeAward(userDiscordId, discordRoleId);
+		Assertions.assertThrows(BadgeRewardedException.class, () -> awardService.addBadgeAward(userDiscordId, discordRoleId));
 	}
 	
 }

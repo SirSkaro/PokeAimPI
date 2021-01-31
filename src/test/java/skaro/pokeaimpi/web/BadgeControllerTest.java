@@ -5,26 +5,26 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import skaro.pokeaimpi.TestUtility;
+import skaro.pokeaimpi.sdk.resource.Badge;
 import skaro.pokeaimpi.services.BadgeService;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(BadgeController.class)
 public class BadgeControllerTest {
 
@@ -36,10 +36,10 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void getAll_shouldGetAllBadges() throws Exception {
-		List<BadgeDTO> allBadges = new ArrayList<>();
-		allBadges.add(new BadgeDTO());
-		allBadges.add(new BadgeDTO());
-		allBadges.add(new BadgeDTO());
+		List<Badge> allBadges = new ArrayList<>();
+		allBadges.add(new Badge());
+		allBadges.add(new Badge());
+		allBadges.add(new Badge());
 		
 		Mockito.when(badgeService.getAll()).thenReturn(allBadges);
 		
@@ -52,7 +52,7 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void gettingAnyBadge_shouldGetBadgeWithExpectedFields_whenBadgeExists() throws Exception {
-		BadgeDTO badge = createValidBadge();
+		Badge badge = createValidBadge();
 		Mockito.when(badgeService.getById(badge.getId())).thenReturn(Optional.of(badge));
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badge.getId()))
@@ -69,7 +69,7 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void getById_shouldGetBadgeWithSpecifiedPrimaryKey_whenBadgeExists() throws Exception {
-		BadgeDTO badge = createValidBadge();
+		Badge badge = createValidBadge();
 		Mockito.when(badgeService.getById(badge.getId())).thenReturn(Optional.of(badge));
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/badge/"+badge.getId()))
@@ -110,8 +110,8 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void createBadge_shouldReturnNewlyCreatedBadge_whenBadgeIsValid() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(BadgeDTO.class))).thenReturn(badge);
+		Badge badge = createValidBadge();
+		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(Badge.class))).thenReturn(badge);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/badge")
 				.content(TestUtility.convertObjectToJsonBytes(badge))
@@ -122,17 +122,17 @@ public class BadgeControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$").isMap())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.greaterThanOrEqualTo(0)))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.pointThreshold", Matchers.greaterThanOrEqualTo(0)))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId", Matchers.not(Matchers.isEmptyOrNullString())))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.not(Matchers.isEmptyOrNullString())))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.not(Matchers.isEmptyOrNullString())))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.imageUri", Matchers.not(Matchers.isEmptyOrNullString())))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.canBeEarnedWithPoints", Matchers.isOneOf(true, false)));
+		.andExpect(MockMvcResultMatchers.jsonPath("$.discordRoleId", Matchers.not(Matchers.emptyOrNullString())))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.not(Matchers.emptyOrNullString())))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.not(Matchers.emptyOrNullString())))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.imageUri", Matchers.not(Matchers.emptyOrNullString())))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.canBeEarnedWithPoints", Matchers.oneOf(true, false)));
 	}
 	
 	@Test
 	public void createBadge_should400_whenBadgePointThresholdIsNotValid() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(BadgeDTO.class))).thenReturn(badge);
+		Badge badge = createValidBadge();
+		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(Badge.class))).thenReturn(badge);
 		
 		badge.setPointThreshold(-1);
 		failPostToBadgeEndpoint(badge);
@@ -140,8 +140,8 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void createBadge_should400_whenBadgeImageURIIsNotValid() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(BadgeDTO.class))).thenReturn(badge);
+		Badge badge = createValidBadge();
+		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(Badge.class))).thenReturn(badge);
 		
 		badge.setImageUri("");
 		failPostToBadgeEndpoint(badge);
@@ -153,8 +153,8 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void createBadge_should400_whenBadgeTitleIsNotValid() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(BadgeDTO.class))).thenReturn(badge);
+		Badge badge = createValidBadge();
+		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(Badge.class))).thenReturn(badge);
 		
 		badge.setTitle("");
 		failPostToBadgeEndpoint(badge);
@@ -164,8 +164,8 @@ public class BadgeControllerTest {
 	
 	@Test
 	public void createBadge_should400_whenBadgeDescriptionIsNotValid() throws Exception {
-		BadgeDTO badge = createValidBadge();
-		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(BadgeDTO.class))).thenReturn(badge);
+		Badge badge = createValidBadge();
+		Mockito.when(badgeService.saveBadge(ArgumentMatchers.any(Badge.class))).thenReturn(badge);
 		
 		badge.setDescription("");
 		failPostToBadgeEndpoint(badge);
@@ -173,14 +173,14 @@ public class BadgeControllerTest {
 		failPostToBadgeEndpoint(badge);
 	}
 	
-	private BadgeDTO createMockBadgeWithDiscordRoleId(String discordRoleId) {
-		BadgeDTO result = new BadgeDTO();
+	private Badge createMockBadgeWithDiscordRoleId(String discordRoleId) {
+		Badge result = new Badge();
 		result.setDiscordRoleId(discordRoleId);
 		return result;
 	}
 	
-	private BadgeDTO createValidBadge() {
-		BadgeDTO result = new BadgeDTO();
+	private Badge createValidBadge() {
+		Badge result = new Badge();
 		result.setDescription("this is a test badge");
 		result.setDiscordRoleId("9999");
 		result.setImageUri("https://www.imgur.com/image.png");
@@ -192,7 +192,7 @@ public class BadgeControllerTest {
 		return result;
 	}
 	
-	private void failPostToBadgeEndpoint(BadgeDTO badge) throws Exception {
+	private void failPostToBadgeEndpoint(Badge badge) throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.post("/badge")
 				.content(TestUtility.convertObjectToJsonBytes(badge))
 				.contentType(MediaType.APPLICATION_JSON)

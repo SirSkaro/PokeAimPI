@@ -14,8 +14,8 @@ import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.UserEntity;
+import skaro.pokeaimpi.sdk.resource.BadgeAwardRecord;
 import skaro.pokeaimpi.services.BadgeAwardService;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotAwardableException;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
 import skaro.pokeaimpi.web.exceptions.BadgeRewardedException;
@@ -34,45 +34,45 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 	private ModelMapper modelMapper;
 	
 	@Override
-	public List<BadgeAwardDTO> getAll() {
+	public List<BadgeAwardRecord> getAll() {
 		return awardRepository.findAll()
 				.stream()
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.map(award -> modelMapper.map(award, BadgeAwardRecord.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<BadgeAwardDTO> getByBadgeId(Integer id) {
+	public List<BadgeAwardRecord> getByBadgeId(Integer id) {
 		return awardRepository.findByBadgeId(id)
 				.stream()
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.map(award -> modelMapper.map(award, BadgeAwardRecord.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<BadgeAwardDTO> getByUserId(Integer id) {
+	public List<BadgeAwardRecord> getByUserId(Integer id) {
 		return awardRepository.findByUserId(id)
 				.stream()
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.map(award -> modelMapper.map(award, BadgeAwardRecord.class))
 				.collect(Collectors.toList());
 	}
 	
 	@Override
-	public List<BadgeAwardDTO> getByUserDiscordId(String discordId) {
+	public List<BadgeAwardRecord> getByUserDiscordId(String discordId) {
 		return awardRepository.findByUserDiscordIdSortThresholdDesc(discordId)
 				.stream()
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.map(award -> modelMapper.map(award, BadgeAwardRecord.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<BadgeAwardDTO> getByBadgeIdAndUserId(Integer userId, Integer badgeId) {
+	public Optional<BadgeAwardRecord> getByBadgeIdAndUserId(Integer userId, Integer badgeId) {
 		return awardRepository.findByBadgeIdAndUserId(badgeId, userId)
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class));
+				.map(award -> modelMapper.map(award, BadgeAwardRecord.class));
 	}
 	
 	@Override
-	public BadgeAwardDTO addBadgeAward(String userDiscordId, String discordRoleId) {
+	public BadgeAwardRecord addBadgeAward(String userDiscordId, String discordRoleId) {
 		BadgeEntity badge = badgeRepository.getByDiscordRoleId(discordRoleId)
 				.orElseThrow(() -> new BadgeNotFoundException(discordRoleId));
 		
@@ -88,21 +88,21 @@ public class BadgeAwardServiceImpl implements BadgeAwardService {
 		}
 		
 		BadgeAwardEntity badgeAward = awardRepository.save(new BadgeAwardEntity(user, badge));
-		return modelMapper.map(badgeAward, BadgeAwardDTO.class);
+		return modelMapper.map(badgeAward, BadgeAwardRecord.class);
 	}
 
 	@Override
-	public List<BadgeAwardDTO> getByBadgeDiscordRoleId(String discordId) {
+	public List<BadgeAwardRecord> getByBadgeDiscordRoleId(String discordId) {
 		return awardRepository.findByBadgeDiscordRoleId(discordId)
 				.stream()
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class))
+				.map(award -> modelMapper.map(award, BadgeAwardRecord.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<BadgeAwardDTO> getByDiscordRoleIdAndUserDiscordId(String discordRoleId, String userDiscordId) {
+	public Optional<BadgeAwardRecord> getByDiscordRoleIdAndUserDiscordId(String discordRoleId, String userDiscordId) {
 		return awardRepository.findByBadgeDiscordRoleIdAndUserDiscordId(discordRoleId, userDiscordId)
-				.map(award -> modelMapper.map(award, BadgeAwardDTO.class));
+				.map(award -> modelMapper.map(award, BadgeAwardRecord.class));
 	}
 	
 	private boolean badgeAlreadyRewardedToUser(String userDiscordId, String discordRoleId) {

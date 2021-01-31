@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -21,14 +21,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import skaro.pokeaimpi.TestUtility;
+import skaro.pokeaimpi.sdk.resource.Badge;
+import skaro.pokeaimpi.sdk.resource.BadgeAwardRecord;
+import skaro.pokeaimpi.sdk.resource.User;
 import skaro.pokeaimpi.services.BadgeAwardService;
-import skaro.pokeaimpi.web.dtos.BadgeAwardDTO;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
-import skaro.pokeaimpi.web.dtos.UserDTO;
 import skaro.pokeaimpi.web.exceptions.BadgeNotFoundException;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(BadgeAwardController.class)
 public class BadgeAwardControllerTest {
 
@@ -40,7 +40,7 @@ public class BadgeAwardControllerTest {
 	
 	@Test
 	public void getAll_shouldGetAllAwards() throws Exception {
-		List<BadgeAwardDTO> allAwards = createListOfEmptyBadges();
+		List<BadgeAwardRecord> allAwards = createListOfEmptyBadges();
 		Mockito.when(awardService.getAll()).thenReturn(allAwards);
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/award"))
@@ -69,7 +69,7 @@ public class BadgeAwardControllerTest {
 	
 	@Test
 	public void getByBadgeId_shouldGetAllAwardsWithBadgeId() throws Exception {
-		List<BadgeAwardDTO> allAwards = createListOfEmptyBadges();
+		List<BadgeAwardRecord> allAwards = createListOfEmptyBadges();
 		int badgeId = 1;
 		allAwards.forEach(award -> award.setBadge(createBadgeWithId(badgeId)));
 		Mockito.when(awardService.getByBadgeId(badgeId)).thenReturn(allAwards);
@@ -88,7 +88,7 @@ public class BadgeAwardControllerTest {
 	
 	@Test
 	public void getByUserId_shouldGetAllAwardsForTheUser() throws Exception {
-		List<BadgeAwardDTO> allAwards = createListOfEmptyBadges();
+		List<BadgeAwardRecord> allAwards = createListOfEmptyBadges();
 		int userId = 1;
 		allAwards.forEach(award -> award.setUser(createUserWithId(userId)));
 		Mockito.when(awardService.getByUserId(userId)).thenReturn(allAwards);
@@ -107,7 +107,7 @@ public class BadgeAwardControllerTest {
 	
 	@Test
 	public void awardBadge_shouldReturnNewAward_WhenUserAndBadgeExist() throws Exception {
-		BadgeAwardDTO newAward = createEmptyAward();
+		BadgeAwardRecord newAward = createEmptyAward();
 		String userDiscordId = "1";
 		String discordRoleId = "2";
 		newAward.getBadge().setDiscordRoleId(discordRoleId);
@@ -146,32 +146,32 @@ public class BadgeAwardControllerTest {
 		.andExpect(MockMvcResultMatchers.status().is4xxClientError());
 	}
 	
-	private List<BadgeAwardDTO> createListOfEmptyBadges() {
-		List<BadgeAwardDTO> result = new ArrayList<>();
-		result.add(new BadgeAwardDTO());
-		result.add(new BadgeAwardDTO());
-		result.add(new BadgeAwardDTO());
+	private List<BadgeAwardRecord> createListOfEmptyBadges() {
+		List<BadgeAwardRecord> result = new ArrayList<>();
+		result.add(new BadgeAwardRecord());
+		result.add(new BadgeAwardRecord());
+		result.add(new BadgeAwardRecord());
 		
 		return result;
 	}
 	
-	private BadgeAwardDTO createEmptyAward() {
-		BadgeAwardDTO result = new BadgeAwardDTO();
-		result.setUser(new UserDTO());
-		result.setBadge(new BadgeDTO());
+	private BadgeAwardRecord createEmptyAward() {
+		BadgeAwardRecord result = new BadgeAwardRecord();
+		result.setUser(new User());
+		result.setBadge(new Badge());
 		result.setAwardDate(new Date());
 		
 		return result;
 	}
 	
-	private BadgeDTO createBadgeWithId(int id) {
-		BadgeDTO result = new BadgeDTO();
+	private Badge createBadgeWithId(int id) {
+		Badge result = new Badge();
 		result.setId(id);
 		return result;
 	}
 	
-	private UserDTO createUserWithId(int id) {
-		UserDTO result = TestUtility.createEmptyUserDTO();
+	private User createUserWithId(int id) {
+		User result = TestUtility.createEmptyUserDTO();
 		result.setId(id);
 		return result;
 	}

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import skaro.pokeaimpi.repository.entities.UserEntity;
-import skaro.pokeaimpi.web.dtos.UserDTO;
+import skaro.pokeaimpi.sdk.resource.User;
 
 @Configuration
 public class PokeAimPIConfig {
@@ -17,7 +17,7 @@ public class PokeAimPIConfig {
 	@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public ModelMapper getUserModelMapper() {
 		
-		PropertyMap<UserEntity, UserDTO> userEntityToDTOMapping = new PropertyMap<UserEntity, UserDTO>() {
+		PropertyMap<UserEntity, User> userEntityToDTOMapping = new PropertyMap<UserEntity, User>() {
 			@Override
 			protected void configure()
 			{
@@ -26,7 +26,7 @@ public class PokeAimPIConfig {
 			}
 		};
 		
-		PropertyMap<UserDTO, UserEntity> userDTOToEntityMapping = new PropertyMap<UserDTO, UserEntity>() {
+		PropertyMap<User, UserEntity> userDTOToEntityMapping = new PropertyMap<User, UserEntity>() {
 			@Override
 			protected void configure()
 			{

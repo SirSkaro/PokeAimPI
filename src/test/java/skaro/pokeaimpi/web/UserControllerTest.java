@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -20,17 +20,18 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import skaro.pokeaimpi.TestUtility;
+import skaro.pokeaimpi.sdk.config.PokeAimPiProperties;
+import skaro.pokeaimpi.sdk.request.PointAmount;
+import skaro.pokeaimpi.sdk.resource.Badge;
+import skaro.pokeaimpi.sdk.resource.NewAwardList;
+import skaro.pokeaimpi.sdk.resource.User;
+import skaro.pokeaimpi.sdk.resource.UserProgress;
 import skaro.pokeaimpi.services.PointService;
 import skaro.pokeaimpi.services.ProgressService;
 import skaro.pokeaimpi.services.UserService;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
-import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
-import skaro.pokeaimpi.web.dtos.PointsDTO;
-import skaro.pokeaimpi.web.dtos.UserDTO;
-import skaro.pokeaimpi.web.dtos.UserProgressDTO;
 import skaro.pokeaimpi.web.exceptions.SocialConnectionNotFoundException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
 	
@@ -44,14 +45,17 @@ public class UserControllerTest {
 	private PointService pointService;
 	
 	@MockBean
+	PokeAimPiProperties messageProperties;
+	
+	@MockBean
 	private ProgressService progressService;
 	
 	@Test
 	public void getAll_shouldGetAllUsers() throws Exception {
-		List<UserDTO> allUsers = new ArrayList<>();
-		allUsers.add(new UserDTO());
-		allUsers.add(new UserDTO());
-		allUsers.add(new UserDTO());
+		List<User> allUsers = new ArrayList<>();
+		allUsers.add(new User());
+		allUsers.add(new User());
+		allUsers.add(new User());
 		Mockito.when(userService.getAll()).thenReturn(allUsers);
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user"))
@@ -63,7 +67,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void getByDiscordId_shouldGetUserWithSpecifiedId_whenUserExists() throws Exception {
-		UserDTO userDTO = setUpMockUserDTO();
+		User userDTO = setUpMockUserDTO();
 		String discordId = userDTO.getSocialProfile().getDiscordConnection().getDiscordId();
 		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.of(userDTO));
 		
@@ -76,7 +80,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void gettingAnyUser_shouldGetUserWithExpectedFields_whenUserExists() throws Exception {
-		UserDTO userDTO = setUpMockUserDTO();
+		User userDTO = setUpMockUserDTO();
 		String discordId = userDTO.getSocialProfile().getDiscordConnection().getDiscordId();
 		Mockito.when(userService.getByDiscordId(discordId)).thenReturn(Optional.of(userDTO));
 		
@@ -105,7 +109,7 @@ public class UserControllerTest {
 	
 	@Test
 	public void getByTwitchName_shouldGetUserWithSpecifiedName() throws Exception {
-		UserDTO userDTO = setUpMockUserDTO();
+		User userDTO = setUpMockUserDTO();
 		String twitchUserName = userDTO.getSocialProfile().getTwitchConnection().getUserName();
 		Mockito.when(userService.getByTwitchName(twitchUserName)).thenReturn(Optional.of(userDTO));
 		
@@ -128,12 +132,12 @@ public class UserControllerTest {
 	
 	@Test
 	public void addPointsByDiscordId_shouldReturnAnEmptyListOfAwards_whenNoThresholdIsPassed() throws Exception {
-		UserDTO userDTO = setUpMockUserDTO();
+		User userDTO = setUpMockUserDTO();
 		String discordId = userDTO.getSocialProfile().getDiscordConnection().getDiscordId();
-		NewAwardsDTO testEmptyAwardDTO = setUpMockEmptyAwardDTO(userDTO, discordId);
+		NewAwardList testEmptyAwardDTO = setUpMockEmptyAwardDTO(userDTO, discordId);
 		Mockito.when(pointService.addPointsViaDiscordId(discordId, 1)).thenReturn(testEmptyAwardDTO);
 		
-		PointsDTO testRequest = new PointsDTO();
+		PointAmount testRequest = new PointAmount();
 		testRequest.setAmount(1);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/user/discord/"+discordId+"/points/add")
@@ -150,11 +154,11 @@ public class UserControllerTest {
 	
 	@Test
 	public void addPointsByDiscordId_shouldReturnListOfAwards_whenThresholdIsPassed() throws Exception {
-		UserDTO userDTO = setUpMockUserDTO();
+		User userDTO = setUpMockUserDTO();
 		String discordId = userDTO.getSocialProfile().getDiscordConnection().getDiscordId();
-		NewAwardsDTO testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(userDTO, discordId);
+		NewAwardList testNonEmptyAwardDTO = setUpMockNonEmptyAwardDTO(userDTO, discordId);
 		Mockito.when(pointService.addPointsViaDiscordId(discordId, 2)).thenReturn(testNonEmptyAwardDTO);
-		PointsDTO testRequest = new PointsDTO();
+		PointAmount testRequest = new PointAmount();
 		testRequest.setAmount(2);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/user/discord/"+discordId+"/points/add")
@@ -172,7 +176,7 @@ public class UserControllerTest {
 	@Test
 	public void addPointsByDiscordId_should400_whenNegativePointsAreAdded() throws Exception {
 		int discordId = 1;
-		PointsDTO testRequest = new PointsDTO();
+		PointAmount testRequest = new PointAmount();
 		testRequest.setAmount(1);
 		
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/discord/"+discordId+"/points/add")
@@ -191,7 +195,7 @@ public class UserControllerTest {
 	@Test
 	public void getProgressByDiscordId_shouldReturnProgressOfUserWithExpectedFields() throws Exception {
 		String userDiscordId = "1";
-		UserProgressDTO progressDTO = setUpMockProgressDTO(userDiscordId);
+		UserProgress progressDTO = setUpMockProgressDTO(userDiscordId);
 		Mockito.when(progressService.getByDiscordId(userDiscordId)).thenReturn(progressDTO);
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/user/discord/"+ userDiscordId + "/progress"))
@@ -205,8 +209,8 @@ public class UserControllerTest {
 		.andExpect(MockMvcResultMatchers.jsonPath("$.currentPoints").exists());
 	}
 	
-	private UserDTO setUpMockUserDTO() {
-		UserDTO result = TestUtility.createEmptyUserDTO();
+	private User setUpMockUserDTO() {
+		User result = TestUtility.createEmptyUserDTO();
 		
 		result.setPoints(12);
 		result.setId(1);
@@ -216,33 +220,33 @@ public class UserControllerTest {
 		return result;
 	}
 	
-	private NewAwardsDTO setUpMockEmptyAwardDTO(UserDTO user, String discordId) {
-		NewAwardsDTO result = new NewAwardsDTO();
+	private NewAwardList setUpMockEmptyAwardDTO(User user, String discordId) {
+		NewAwardList result = new NewAwardList();
 		user.getSocialProfile().getDiscordConnection().setDiscordId(discordId);
 		result.setUser(user);
-		result.setBadges(new ArrayList<BadgeDTO>());
+		result.setBadges(new ArrayList<Badge>());
 		
 		return result;
 	}
 	
-	private NewAwardsDTO setUpMockNonEmptyAwardDTO(UserDTO user, String discordId) {
-		NewAwardsDTO result = setUpMockEmptyAwardDTO(user, discordId);
-		List<BadgeDTO> badges = new ArrayList<>();
-		badges.add(new BadgeDTO());
-		badges.add(new BadgeDTO());
+	private NewAwardList setUpMockNonEmptyAwardDTO(User user, String discordId) {
+		NewAwardList result = setUpMockEmptyAwardDTO(user, discordId);
+		List<Badge> badges = new ArrayList<>();
+		badges.add(new Badge());
+		badges.add(new Badge());
 		
 		result.setBadges(badges);
 		return result;
 	}
 	
-	private UserProgressDTO setUpMockProgressDTO(String userDiscordId) {
-		UserProgressDTO result = new UserProgressDTO();
-		result.setCurrentHighestBadge(new BadgeDTO());
+	private UserProgress setUpMockProgressDTO(String userDiscordId) {
+		UserProgress result = new UserProgress();
+		result.setCurrentHighestBadge(new Badge());
 		result.setCurrentPoints(1);
-		result.setNextBadge(new BadgeDTO());
+		result.setNextBadge(new Badge());
 		result.setPointsToNextReward(1);
 		
-		UserDTO user = TestUtility.createEmptyUserDTO();
+		User user = TestUtility.createEmptyUserDTO();
 		user.getSocialProfile().getDiscordConnection().setDiscordId(userDiscordId);
 		result.setUser(user);
 		

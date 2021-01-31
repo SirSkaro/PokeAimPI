@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import skaro.pokeaimpi.repository.UserRepository;
 import skaro.pokeaimpi.repository.entities.UserEntity;
+import skaro.pokeaimpi.sdk.resource.User;
 import skaro.pokeaimpi.services.UserService;
-import skaro.pokeaimpi.web.dtos.UserDTO;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,30 +22,30 @@ public class UserServiceImpl implements UserService {
 	private ModelMapper modelMapper;
 
 	@Override
-	public List<UserDTO> getAll() {
+	public List<User> getAll() {
 		return userRepository.findAll()
 				.stream()
-				.map(user -> modelMapper.map(user, UserDTO.class))
+				.map(user -> modelMapper.map(user, User.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Optional<UserDTO> getByDiscordId(String id) {
+	public Optional<User> getByDiscordId(String id) {
 		return userRepository.getByDiscordId(id)
-				.map(user -> modelMapper.map(user, UserDTO.class));
+				.map(user -> modelMapper.map(user, User.class));
 	}
 
 	@Override
-	public Optional<UserDTO> getByTwitchName(String name) {
+	public Optional<User> getByTwitchName(String name) {
 		return userRepository.getByTwitchUserName(name)
-				.map(user -> modelMapper.map(user, UserDTO.class));
+				.map(user -> modelMapper.map(user, User.class));
 	}
 	
 	@Override
-	public UserDTO createOrUpdate(UserDTO user) {
+	public User createOrUpdate(User user) {
 		UserEntity newUserEntity = modelMapper.map(user, UserEntity.class);
 		newUserEntity = userRepository.save(newUserEntity);
-		return modelMapper.map(newUserEntity, UserDTO.class);
+		return modelMapper.map(newUserEntity, User.class);
 	}
 	
 }

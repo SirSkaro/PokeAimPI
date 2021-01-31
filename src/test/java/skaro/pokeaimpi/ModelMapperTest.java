@@ -1,22 +1,22 @@
 package skaro.pokeaimpi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
-import skaro.pokeaimpi.web.dtos.DiscordConnection;
-import skaro.pokeaimpi.web.dtos.SocialProfile;
-import skaro.pokeaimpi.web.dtos.TwitchConnection;
-import skaro.pokeaimpi.web.dtos.UserDTO;
+import skaro.pokeaimpi.sdk.resource.DiscordConnection;
+import skaro.pokeaimpi.sdk.resource.SocialProfile;
+import skaro.pokeaimpi.sdk.resource.TwitchConnection;
+import skaro.pokeaimpi.sdk.resource.User;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes= { PokeAimPIConfig.class} )
 public class ModelMapperTest {
 	
@@ -33,28 +33,28 @@ public class ModelMapperTest {
 				.with(UserEntity::setTwitchUserName, "pokeaim")
 				.build();
 		
-		UserDTO dto = userModelMapper.map(entity, UserDTO.class);
+		User dto = userModelMapper.map(entity, User.class);
 		
 		compareEntityAndDTO(entity, dto);
 	}
 	
 	@Test
 	public void userDTOShouldDeepMapToUserEntity()  {
-		UserDTO dto = createUserDTO();
+		User dto = createUserDTO();
 		UserEntity entity = userModelMapper.map(dto, UserEntity.class);
 		
 		compareEntityAndDTO(entity, dto);
 	}
 	
-	private void compareEntityAndDTO(UserEntity entity, UserDTO dto) {
+	private void compareEntityAndDTO(UserEntity entity, User dto) {
 		assertEquals(entity.getId(), dto.getId());
 		assertEquals(entity.getPoints(), dto.getPoints());
 		assertEquals(entity.getTwitchUserName(), dto.getSocialProfile().getTwitchConnection().getUserName());
 		assertEquals(entity.getDiscordId(), dto.getSocialProfile().getDiscordConnection().getDiscordId());
 	}
 	
-	private UserDTO createUserDTO() {
-		UserDTO result = new UserDTO();
+	private User createUserDTO() {
+		User result = new User();
 		SocialProfile profile = new SocialProfile();
 		DiscordConnection discordConnection = new DiscordConnection();
 		TwitchConnection twitchConnection = new TwitchConnection();

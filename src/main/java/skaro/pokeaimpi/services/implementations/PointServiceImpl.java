@@ -15,10 +15,10 @@ import skaro.pokeaimpi.repository.entities.BadgeAwardEntity;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
+import skaro.pokeaimpi.sdk.resource.Badge;
+import skaro.pokeaimpi.sdk.resource.NewAwardList;
+import skaro.pokeaimpi.sdk.resource.User;
 import skaro.pokeaimpi.services.PointService;
-import skaro.pokeaimpi.web.dtos.BadgeDTO;
-import skaro.pokeaimpi.web.dtos.NewAwardsDTO;
-import skaro.pokeaimpi.web.dtos.UserDTO;
 
 @Service
 public class PointServiceImpl implements PointService {
@@ -33,25 +33,25 @@ public class PointServiceImpl implements PointService {
 	private ModelMapper modelMapper;
 
 	@Override
-	public NewAwardsDTO addPointsViaDiscordId(String discordId, int pointAmount) {
+	public NewAwardList addPointsViaDiscordId(String discordId, int pointAmount) {
 		UserEntity user = userRepository.getByDiscordId(discordId)
 				.orElseGet(() -> createUserWithDiscordId(discordId));
 		return awardPoints(user, pointAmount);
 	}
 
 	@Override
-	public NewAwardsDTO addPointsViaTwitchName(String twitchName, int pointAmount) {
+	public NewAwardList addPointsViaTwitchName(String twitchName, int pointAmount) {
 		UserEntity user = userRepository.getByTwitchUserName(twitchName)
 				.orElseGet(() -> createUserWithTwitchName(twitchName));
 		return awardPoints(user, pointAmount);
 	}
 	
-	private NewAwardsDTO awardPoints(UserEntity user, int pointAmount) {
+	private NewAwardList awardPoints(UserEntity user, int pointAmount) {
 		int previousPointAmount = user.getPoints();
 		int newPointAmount;
 		
 		if(previousPointAmount == Integer.MAX_VALUE) {
-			return createNewAwardsDTO(user, Arrays.asList());
+			return createNewAwardList(user, Arrays.asList());
 		} else if (isOverflow(previousPointAmount, pointAmount)) {
 			newPointAmount = Integer.MAX_VALUE;
 		} else {
@@ -62,7 +62,7 @@ public class PointServiceImpl implements PointService {
 		List<BadgeEntity> badgesToAward = badgeRepository.getByCanBeEarnedWithPointsTrueAndPointThresholdBetween(previousPointAmount + 1, newPointAmount);
 		
 		saveNewAwards(user, badgesToAward);
-		NewAwardsDTO result = createNewAwardsDTO(user, badgesToAward);
+		NewAwardList result = createNewAwardList(user, badgesToAward);
 		return result;
 	}
 	
@@ -95,12 +95,12 @@ public class PointServiceImpl implements PointService {
 		return userRepository.save(user);
 	}
 	
-	private NewAwardsDTO createNewAwardsDTO(UserEntity user, List<BadgeEntity> badges) {
-		NewAwardsDTO badgeAwardDTO = new NewAwardsDTO();
-		badgeAwardDTO.setUser(modelMapper.map(user, UserDTO.class));
+	private NewAwardList createNewAwardList(UserEntity user, List<BadgeEntity> badges) {
+		NewAwardList badgeAwardDTO = new NewAwardList();
+		badgeAwardDTO.setUser(modelMapper.map(user, User.class));
 		
-		List<BadgeDTO> badgeDTOs = badges.stream()
-			.map(badgeEntity -> modelMapper.map(badgeEntity, BadgeDTO.class))
+		List<Badge> badgeDTOs = badges.stream()
+			.map(badgeEntity -> modelMapper.map(badgeEntity, Badge.class))
 			.collect(Collectors.toList());
 		badgeAwardDTO.setBadges(badgeDTOs);
 		

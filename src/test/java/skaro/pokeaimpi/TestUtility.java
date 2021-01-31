@@ -11,10 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import skaro.pokeaimpi.repository.entities.BadgeEntity;
 import skaro.pokeaimpi.repository.entities.EntityBuilder;
 import skaro.pokeaimpi.repository.entities.UserEntity;
-import skaro.pokeaimpi.web.dtos.DiscordConnection;
-import skaro.pokeaimpi.web.dtos.SocialProfile;
-import skaro.pokeaimpi.web.dtos.TwitchConnection;
-import skaro.pokeaimpi.web.dtos.UserDTO;
+import skaro.pokeaimpi.sdk.resource.DiscordConnection;
+import skaro.pokeaimpi.sdk.resource.SocialProfile;
+import skaro.pokeaimpi.sdk.resource.TwitchConnection;
+import skaro.pokeaimpi.sdk.resource.User;
 
 public class TestUtility {
 	
@@ -26,8 +26,8 @@ public class TestUtility {
         return mapper.writeValueAsBytes(object);
     }
     
-    public static UserDTO createEmptyUserDTO() {
-    	UserDTO result = new UserDTO();
+    public static User createEmptyUserDTO() {
+    	User result = new User();
 		SocialProfile profile = new SocialProfile();
 		DiscordConnection discordConnection = new DiscordConnection();
 		TwitchConnection twitchConnection = new TwitchConnection();

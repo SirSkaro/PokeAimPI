@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "badge")
-public class BadgeEntity implements PokeAimPIEntity {
+public class BadgeEntity {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
